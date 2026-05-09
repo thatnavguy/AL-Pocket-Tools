@@ -1,0 +1,139 @@
+{
+  "name": "al-pocket-tools",
+  "displayName": "AL Pocket Tools",
+  "description": "Collection of tools for AL (Business Central) development",
+  "version": "0.1.0",
+  "publisher": "teddyherryanto",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thatnavguy/AL-Pocket-Tools.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thatnavguy/AL-Pocket-Tools/issues"
+  },
+  "homepage": "https://github.com/thatnavguy/AL-Pocket-Tools#readme",
+  "keywords": [
+    "al",
+    "business central",
+    "dynamics 365",
+    "nav",
+    "alpackages",
+    "region viewer",
+    "pragma viewer",
+    "version bump"
+  ],
+  "engines": {
+    "vscode": "^1.118.0"
+  },
+  "icon": "image/icon.png",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:al",
+    "onCommand:al-pocket-tools.bumpVersion"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "al-pocket-tools.cleanupAppFiles",
+        "title": "Cleanup Duplicate App Files",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.refreshPragmaViewer",
+        "title": "Refresh",
+        "icon": "$(refresh)",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.bumpVersion",
+        "title": "Bump Version...",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.incrementMajor",
+        "title": "Increment Major Version",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.incrementMinor",
+        "title": "Increment Minor Version",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.incrementBuild",
+        "title": "Increment Build Version",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.incrementRevision",
+        "title": "Increment Revision Version",
+        "category": "AL Pocket Tools"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "al-pocket-tools.cleanupAppFiles",
+          "when": "resourceExtname == .app",
+          "group": "al-pocket-tools@1"
+        },
+        {
+          "command": "al-pocket-tools.bumpVersion",
+          "when": "resourceFilename == app.json",
+          "group": "al-pocket-tools@1"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "al-pocket-tools.refreshPragmaViewer",
+          "when": "view == al-pocket-tools.pragmaViewer",
+          "group": "navigation"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "al-pocket-tools.regionViewer",
+          "name": "Region Viewer"
+        },
+        {
+          "id": "al-pocket-tools.pragmaViewer",
+          "name": "Pragma Viewer"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "al-pocket-tools.regionViewer",
+        "contents": "Open an AL file to see its regions."
+      },
+      {
+        "view": "al-pocket-tools.pragmaViewer",
+        "contents": "No pragma directives found in the workspace.\n\n[Refresh](command:al-pocket-tools.refreshPragmaViewer)"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.118.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.56.1",
+    "eslint": "^9.39.3",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}

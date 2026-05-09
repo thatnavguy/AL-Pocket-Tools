@@ -1,0 +1,15 @@
+### AI ###
+*.env
+.ai/
+.github/agents
+
+### Node ###
+node_modules/
+
+### Build output ###
+out/
+*.vsix
+
+### VS Code test runner ###
+.vscode-test/
+.claude/settings.local.json
