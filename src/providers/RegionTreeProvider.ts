@@ -60,28 +60,8 @@ export class RegionTreeProvider implements vscode.TreeDataProvider<RegionItem> {
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
     private roots: RegionItem[] = [];
-    private debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
-    constructor(context: vscode.ExtensionContext) {
-        context.subscriptions.push(
-            vscode.window.onDidChangeActiveTextEditor(editor => {
-                this.refresh(editor?.document);
-            }),
-            vscode.workspace.onDidChangeTextDocument(e => {
-                if (e.document === vscode.window.activeTextEditor?.document) {
-                    this.scheduleRefresh(e.document);
-                }
-            }),
-        );
-        this.refresh(vscode.window.activeTextEditor?.document);
-    }
-
-    private scheduleRefresh(document: vscode.TextDocument): void {
-        clearTimeout(this.debounceTimer);
-        this.debounceTimer = setTimeout(() => this.refresh(document), 300);
-    }
-
-    private refresh(document?: vscode.TextDocument): void {
+    refresh(document?: vscode.TextDocument): void {
         this.roots = document?.languageId === 'al' ? parseRegions(document) : [];
         this._onDidChangeTreeData.fire();
     }

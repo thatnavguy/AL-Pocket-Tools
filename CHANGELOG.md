@@ -2,6 +2,14 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.2.0] - 2026-05-12
+
+### Changed
+
+- **Region Viewer** — removed automatic refresh on every editor switch and keystroke. The view now updates only when you click the Refresh button in the view title bar, eliminating continuous background CPU usage while editing.
+- **Pragma Viewer** — removed automatic scan on view visibility. The view now only scans when you click Refresh explicitly; it no longer starts a workspace-wide file scan on extension activation.
+- **Version Status Bar** — `app.json` path resolution is now cached per workspace folder and only re-resolved when files are created or deleted. This eliminates repeated directory-walk `stat()` calls on every editor tab switch.
+
 ## [0.1.0] - 2026-05-11
 
 ### Added

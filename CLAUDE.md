@@ -47,6 +47,26 @@ To run a single test file, the test runner uses `@vscode/test-cli` with the glob
 
 Every feature gets a dedicated doc page at `docs/features/<feature-name>.md`. Cover: what it does, how to trigger it (command palette and any context menu), the output/UX flow, and any file format conventions or edge cases. `README.md` lists all features in a table with a one-line description and links to the doc page.
 
+## Post-Feature Performance Checklist
+
+**After completing any new feature, always run a performance impact analysis and report it to the user before marking the task done.**
+
+The report must cover:
+
+1. **Trigger inventory** — list every event, activation event, or user action that causes the feature to run (e.g. `onDidChangeTextDocument`, `onDidChangeActiveTextEditor`, view visibility, command palette, context menu). Be explicit about frequency: "fires on every keystroke" vs "fires once on activation" vs "only on explicit user action".
+
+2. **Performance risk rating per trigger** — for each trigger, rate it Low / Medium / High and explain why:
+   - High-frequency events (`onDidChangeTextDocument`, `onDidChangeActiveTextEditor`) are High risk unless debounced
+   - Workspace-wide file scans (`findFiles('**/*.al')`) are High risk if unbounded or run eagerly
+   - Startup/activation work is High risk if it blocks or scans
+   - Single-file reads on save or explicit user action are Low risk
+
+3. **Mitigations in place** — what debounce, caching, lazy-loading, or scoping is already applied
+
+4. **Any outstanding concerns** — items the user should decide on (e.g. "Refresh has no debounce — users can spam it; consider disabling the button during scan")
+
+Format the report as a concise table followed by a short bullet list of concerns. Do not skip this step even for small features — a status bar item that fires on every editor switch is a real cost.
+
 ## Performance Requirements
 
 **Every feature must not degrade VS Code performance.** This is a hard constraint, not a guideline.

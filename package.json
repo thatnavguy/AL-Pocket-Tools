@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -41,6 +41,12 @@
       {
         "command": "al-pocket-tools.cleanupAppFiles",
         "title": "Cleanup Duplicate App Files",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.refreshRegionViewer",
+        "title": "Refresh",
+        "icon": "$(refresh)",
         "category": "AL Pocket Tools"
       },
       {
@@ -90,6 +96,11 @@
       ],
       "view/title": [
         {
+          "command": "al-pocket-tools.refreshRegionViewer",
+          "when": "view == al-pocket-tools.regionViewer",
+          "group": "navigation"
+        },
+        {
           "command": "al-pocket-tools.refreshPragmaViewer",
           "when": "view == al-pocket-tools.pragmaViewer",
           "group": "navigation"
@@ -111,7 +122,7 @@
     "viewsWelcome": [
       {
         "view": "al-pocket-tools.regionViewer",
-        "contents": "Open an AL file to see its regions."
+        "contents": "Open an AL file and click Refresh to see its regions.\n\n[Refresh](command:al-pocket-tools.refreshRegionViewer)"
       },
       {
         "view": "al-pocket-tools.pragmaViewer",

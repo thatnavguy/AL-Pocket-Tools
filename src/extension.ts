@@ -6,7 +6,7 @@ import { PragmaTreeProvider } from './providers/PragmaTreeProvider';
 
 export function activate(context: vscode.ExtensionContext) {
     const output = vscode.window.createOutputChannel('AL Pocket Tools');
-    const regionProvider = new RegionTreeProvider(context);
+    const regionProvider = new RegionTreeProvider();
     const pragmaProvider = new PragmaTreeProvider();
 
     new VersionStatusBar(context);
@@ -15,16 +15,6 @@ export function activate(context: vscode.ExtensionContext) {
         treeDataProvider: pragmaProvider,
         showCollapseAll: true,
     });
-
-    // Scan when view first becomes visible (or is already visible at activation).
-    // setImmediate yields so VS Code can propagate the initial visible state first.
-    const triggerScanIfNeeded = () => {
-        if (pragmaView.visible && !pragmaProvider.hasData()) {
-            void pragmaProvider.scan();
-        }
-    };
-    setImmediate(triggerScanIfNeeded);
-    context.subscriptions.push(pragmaView.onDidChangeVisibility(triggerScanIfNeeded));
 
     context.subscriptions.push(
         output,
@@ -46,6 +36,10 @@ export function activate(context: vscode.ExtensionContext) {
                 editor.selection = new vscode.Selection(pos, pos);
                 editor.revealRange(new vscode.Range(pos, pos), vscode.TextEditorRevealType.InCenter);
             }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.refreshRegionViewer',
+            () => { regionProvider.refresh(vscode.window.activeTextEditor?.document); }
         ),
         vscode.commands.registerCommand(
             'al-pocket-tools.refreshPragmaViewer',

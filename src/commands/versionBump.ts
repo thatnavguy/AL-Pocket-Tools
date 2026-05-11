@@ -221,6 +221,8 @@ export async function incrementVersionPart(part: VersionPart): Promise<void> {
 
 export class VersionStatusBar {
     private readonly item: vscode.StatusBarItem;
+    // Keyed by workspace folder URI string; null means "no app.json found for this folder"
+    private readonly appJsonCache = new Map<string, vscode.Uri | null>();
 
     constructor(context: vscode.ExtensionContext) {
         this.item = vscode.window.createStatusBarItem(
@@ -240,22 +242,45 @@ export class VersionStatusBar {
                     void this.update(vscode.window.activeTextEditor);
                 }
             }),
+            vscode.workspace.onDidCreateFiles(() => {
+                this.appJsonCache.clear();
+                void this.update(vscode.window.activeTextEditor);
+            }),
+            vscode.workspace.onDidDeleteFiles(() => {
+                this.appJsonCache.clear();
+                void this.update(vscode.window.activeTextEditor);
+            }),
         );
 
         void this.update(vscode.window.activeTextEditor);
     }
 
-    private async update(editor: vscode.TextEditor | undefined): Promise<void> {
-        let appJsonUri: vscode.Uri | undefined;
+    private async resolveAppJson(editor: vscode.TextEditor | undefined): Promise<vscode.Uri | undefined> {
+        const folder = editor
+            ? vscode.workspace.getWorkspaceFolder(editor.document.uri)
+            : vscode.workspace.workspaceFolders?.[0];
 
+        const key = folder?.uri.toString() ?? '';
+
+        if (this.appJsonCache.has(key)) {
+            return this.appJsonCache.get(key) ?? undefined;
+        }
+
+        let appJsonUri: vscode.Uri | undefined;
         if (editor) {
             appJsonUri = await findNearestAppJson(editor.document.uri);
         }
-
         if (!appJsonUri) {
             const files = await findAppJsonFiles();
             appJsonUri = files[0];
         }
+
+        this.appJsonCache.set(key, appJsonUri ?? null);
+        return appJsonUri;
+    }
+
+    private async update(editor: vscode.TextEditor | undefined): Promise<void> {
+        const appJsonUri = await this.resolveAppJson(editor);
 
         if (!appJsonUri) {
             this.item.hide();
