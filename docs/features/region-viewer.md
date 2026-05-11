@@ -1,5 +1,7 @@
 # Region Viewer
 
+![Region Viewer](../../image/RegionViewer.png)
+
 Shows all `#region` blocks in the active AL file as a navigable tree in the Explorer sidebar. Click any region to jump to it in the editor.
 
 ## How to use

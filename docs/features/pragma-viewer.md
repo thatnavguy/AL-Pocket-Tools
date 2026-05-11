@@ -1,5 +1,7 @@
 # Pragma Viewer
 
+![Pragma Viewer](../../image/PragmaViewer.png)
+
 Shows all pragma directives across the entire AL workspace as a three-level navigable tree. Click any occurrence to jump to it in the editor.
 
 ## How to use

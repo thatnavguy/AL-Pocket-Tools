@@ -1,5 +1,7 @@
 # Version Bump
 
+![Version Bump](../../image/VersionBump.png)
+
 Provides commands to increment the version number in `app.json` for your AL project. Each command updates the correct segment and resets all lower-order segments to zero, following semantic versioning conventions.
 
 ## How to use

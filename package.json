@@ -28,6 +28,7 @@
   },
   "icon": "image/icon.png",
   "categories": [
+    "Programming Languages",
     "Other"
   ],
   "activationEvents": [
