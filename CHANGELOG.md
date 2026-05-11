@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.3.0] - 2026-05-12
+
+### Added
+
+- **Region Viewer: Refresh Mode setting** (`al-pocket-tools.regionViewer.refreshMode`) — choose between `manual` (Refresh button only, default) and `onOpenFile` (auto-refreshes when switching to a different file, only while the view is visible). The welcome message in the view updates to match the active mode.
+
 ## [0.2.0] - 2026-05-12
 
 ### Changed

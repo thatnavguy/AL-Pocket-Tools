@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -122,13 +122,34 @@
     "viewsWelcome": [
       {
         "view": "al-pocket-tools.regionViewer",
+        "when": "al-pocket-tools:regionViewerMode == manual || !al-pocket-tools:regionViewerMode",
         "contents": "Open an AL file and click Refresh to see its regions.\n\n[Refresh](command:al-pocket-tools.refreshRegionViewer)"
+      },
+      {
+        "view": "al-pocket-tools.regionViewer",
+        "when": "al-pocket-tools:regionViewerMode == onOpenFile",
+        "contents": "Open an AL file to see its regions."
       },
       {
         "view": "al-pocket-tools.pragmaViewer",
         "contents": "No pragma directives found in the workspace.\n\n[Refresh](command:al-pocket-tools.refreshPragmaViewer)"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "AL Pocket Tools",
+      "properties": {
+        "al-pocket-tools.regionViewer.refreshMode": {
+          "type": "string",
+          "default": "manual",
+          "enum": ["manual", "onOpenFile"],
+          "enumDescriptions": [
+            "Refresh only when you click the Refresh button in the Region Viewer title bar.",
+            "Automatically refresh when you switch to a different file in the editor. Only runs when the Region Viewer is visible."
+          ],
+          "description": "Controls when the Region Viewer updates its content."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

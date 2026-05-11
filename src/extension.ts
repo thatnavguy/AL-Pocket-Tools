@@ -11,18 +11,53 @@ export function activate(context: vscode.ExtensionContext) {
 
     new VersionStatusBar(context);
 
+    const regionView = vscode.window.createTreeView('al-pocket-tools.regionViewer', {
+        treeDataProvider: regionProvider,
+        showCollapseAll: true,
+    });
+
     const pragmaView = vscode.window.createTreeView('al-pocket-tools.pragmaViewer', {
         treeDataProvider: pragmaProvider,
         showCollapseAll: true,
     });
 
+    // Swap in/out the onDidChangeActiveTextEditor listener based on the refreshMode setting.
+    let autoRefreshDisposable: vscode.Disposable | undefined;
+
+    const applyRefreshMode = () => {
+        autoRefreshDisposable?.dispose();
+        const mode = vscode.workspace
+            .getConfiguration('al-pocket-tools')
+            .get<string>('regionViewer.refreshMode', 'manual');
+
+        void vscode.commands.executeCommand('setContext', 'al-pocket-tools:regionViewerMode', mode);
+
+        if (mode === 'onOpenFile') {
+            autoRefreshDisposable = vscode.window.onDidChangeActiveTextEditor(editor => {
+                if (regionView.visible) {
+                    regionProvider.refresh(editor?.document);
+                }
+            });
+        } else {
+            autoRefreshDisposable = undefined;
+        }
+    };
+
+    applyRefreshMode();
+
     context.subscriptions.push(
         output,
-        vscode.window.createTreeView('al-pocket-tools.regionViewer', {
-            treeDataProvider: regionProvider,
-            showCollapseAll: true,
-        }),
+        regionView,
         pragmaView,
+        { dispose: () => autoRefreshDisposable?.dispose() },
+        vscode.workspace.onDidChangeConfiguration(e => {
+            if (e.affectsConfiguration('al-pocket-tools.regionViewer.refreshMode')) {
+                applyRefreshMode();
+                if (regionView.visible) {
+                    regionProvider.refresh(vscode.window.activeTextEditor?.document);
+                }
+            }
+        }),
         vscode.commands.registerCommand(
             'al-pocket-tools.cleanupAppFiles',
             (uri?: vscode.Uri) => cleanupAppFiles(output, uri)
