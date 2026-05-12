@@ -3,6 +3,7 @@ import { cleanupAppFiles } from './commands/cleanupAppFiles';
 import { nukeAlPackages } from './commands/nukeAlPackages';
 import { syncAlPackages } from './commands/syncAlPackages';
 import { bumpVersion, incrementVersionPart, VersionStatusBar } from './commands/versionBump';
+import { showCallGraph } from './commands/callGraph';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
 import { PragmaTreeProvider } from './providers/PragmaTreeProvider';
 
@@ -89,6 +90,10 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             'al-pocket-tools.refreshPragmaViewer',
             () => { void pragmaProvider.scan(); }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.showCallGraph',
+            () => { void showCallGraph(); }
         ),
         vscode.commands.registerCommand('al-pocket-tools.bumpVersion', () => { void bumpVersion(); }),
         vscode.commands.registerCommand('al-pocket-tools.incrementMajor', () => { void incrementVersionPart('major'); }),

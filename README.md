@@ -12,6 +12,7 @@ A collection of tools for AL (Business Central Application Language) development
 | [Version Bump](docs/features/version-bump.md) | Increments the Major, Minor, Build, or Revision segment of `app.json` with a single command, with automatic reset of lower segments. Status bar shows the current version at a glance. |
 | [Nuke .alpackages](docs/features/nuke-alpackages.md) | Deletes all `.app` files from every `.alpackages` folder in the workspace to force a clean re-download of dependencies. |
 | [Sync .alpackages to Latest](docs/features/sync-alpackages.md) | Finds the newest version of each app across all `.alpackages` folders, removes older copies, and propagates the latest version to any folder that was behind. |
+| [Call Graph](docs/features/call-graph.md) | Right-click inside any AL procedure → Show Call Graph. Opens a visual graph showing which procedures call this one and which internal procedures it calls, with clickable nodes for navigation. |
 
 ## Requirements
 

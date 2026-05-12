@@ -91,6 +91,11 @@
         "command": "al-pocket-tools.incrementRevision",
         "title": "Increment Revision Version",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.showCallGraph",
+        "title": "Show Call Graph",
+        "category": "AL Pocket Tools"
       }
     ],
     "menus": {
@@ -103,6 +108,13 @@
         {
           "command": "al-pocket-tools.bumpVersion",
           "when": "resourceFilename == app.json",
+          "group": "al-pocket-tools@1"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "al-pocket-tools.showCallGraph",
+          "when": "editorLangId == al",
           "group": "al-pocket-tools@1"
         }
       ],
