@@ -2,6 +2,13 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.4.0] - 2026-05-12
+
+### Added
+
+- **Sync .alpackages to Latest** — new command (`AL Pocket Tools: Sync .alpackages to Latest`) that scans every `.alpackages` folder in the workspace, finds the newest version of each app across all folders, removes older copies, and copies the newest version into any folder that was behind. Shows a full DELETE/COPY plan in the Output panel before asking for confirmation.
+- **Nuke .alpackages** — new command (`AL Pocket Tools: Nuke .alpackages`) that deletes every `.app` file from all `.alpackages` folders in the workspace. Useful for forcing a clean re-download of all package dependencies. Shows the full list of files to be removed in the Output panel before asking for confirmation.
+
 ## [0.3.0] - 2026-05-12
 
 ### Added

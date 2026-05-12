@@ -47,6 +47,12 @@ To run a single test file, the test runner uses `@vscode/test-cli` with the glob
 
 Every feature gets a dedicated doc page at `docs/features/<feature-name>.md`. Cover: what it does, how to trigger it (command palette and any context menu), the output/UX flow, and any file format conventions or edge cases. `README.md` lists all features in a table with a one-line description and links to the doc page.
 
+**When creating a new feature or modifying an existing one, you must:**
+1. Create or update the corresponding `docs/features/<feature-name>.md` page to reflect the current behaviour.
+2. Add a new row to the `README.md` features table (new feature) or update the existing description (changed feature).
+
+Do not mark a feature task complete until both documentation steps are done.
+
 ## Post-Feature Performance Checklist
 
 **After completing any new feature, always run a performance impact analysis and report it to the user before marking the task done.**

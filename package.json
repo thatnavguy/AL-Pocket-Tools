@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -33,7 +33,9 @@
   ],
   "activationEvents": [
     "onLanguage:al",
-    "onCommand:al-pocket-tools.bumpVersion"
+    "onCommand:al-pocket-tools.bumpVersion",
+    "onCommand:al-pocket-tools.nukeAlPackages",
+    "onCommand:al-pocket-tools.syncAlPackages"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -41,6 +43,16 @@
       {
         "command": "al-pocket-tools.cleanupAppFiles",
         "title": "Cleanup Duplicate App Files",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.nukeAlPackages",
+        "title": "Nuke .alpackages",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.syncAlPackages",
+        "title": "Sync .alpackages to Latest",
         "category": "AL Pocket Tools"
       },
       {

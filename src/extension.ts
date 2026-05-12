@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import { cleanupAppFiles } from './commands/cleanupAppFiles';
+import { nukeAlPackages } from './commands/nukeAlPackages';
+import { syncAlPackages } from './commands/syncAlPackages';
 import { bumpVersion, incrementVersionPart, VersionStatusBar } from './commands/versionBump';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
 import { PragmaTreeProvider } from './providers/PragmaTreeProvider';
@@ -61,6 +63,14 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             'al-pocket-tools.cleanupAppFiles',
             (uri?: vscode.Uri) => cleanupAppFiles(output, uri)
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.nukeAlPackages',
+            () => nukeAlPackages(output)
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.syncAlPackages',
+            () => syncAlPackages(output)
         ),
         vscode.commands.registerCommand(
             'al-pocket-tools.goToRegion',
