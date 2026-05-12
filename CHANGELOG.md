@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.5.0] - 2026-05-13
+
+### Added
+
+- **Launch Config Manager** — save AL launch configurations to VS Code user settings (`al-pocket-tools.launch.configurations`) and paste them into any project's `launch.json` via the editor right-click context menu. Two new commands: `AL Pocket Tools: Paste Launch Configuration` (pick from saved list and append or replace in the open file) and `AL Pocket Tools: Save Launch Configuration` (pick from configs in the open file and save to user settings, with cursor-position detection to pre-select the relevant entry). Conflict detection on both flows with Append / Replace / Cancel prompts.
+
 ## [0.4.0] - 2026-05-12
 
 ### Added

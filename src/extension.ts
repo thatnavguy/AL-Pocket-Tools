@@ -3,6 +3,7 @@ import { cleanupAppFiles } from './commands/cleanupAppFiles';
 import { nukeAlPackages } from './commands/nukeAlPackages';
 import { syncAlPackages } from './commands/syncAlPackages';
 import { bumpVersion, incrementVersionPart, VersionStatusBar } from './commands/versionBump';
+import { pasteLaunchConfig, saveLaunchConfig } from './commands/launchConfig';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
 import { PragmaTreeProvider } from './providers/PragmaTreeProvider';
 
@@ -95,6 +96,8 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('al-pocket-tools.incrementMinor', () => { void incrementVersionPart('minor'); }),
         vscode.commands.registerCommand('al-pocket-tools.incrementBuild', () => { void incrementVersionPart('build'); }),
         vscode.commands.registerCommand('al-pocket-tools.incrementRevision', () => { void incrementVersionPart('revision'); }),
+        vscode.commands.registerCommand('al-pocket-tools.pasteLaunchConfig', () => { void pasteLaunchConfig(); }),
+        vscode.commands.registerCommand('al-pocket-tools.saveLaunchConfig', () => { void saveLaunchConfig(); }),
     );
 }
 

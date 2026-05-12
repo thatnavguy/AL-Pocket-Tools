@@ -43,6 +43,10 @@ To run a single test file, the test runner uses `@vscode/test-cli` with the glob
 
 **Packaging**: `.vscodeignore` excludes `src/`, `*.ts`, `*.map`, config files — only `out/` JS files and `package.json` ship in the VSIX.
 
+## Feature Design — Clarifying Questions First
+
+**When building a new feature, if there is any doubt about the design (UX flow, data model, edge case handling, scope), ask the user clarifying questions before starting development.** Do not make assumptions and begin coding; surface the ambiguity explicitly and wait for answers.
+
 ## Documentation Convention
 
 Every feature gets a dedicated doc page at `docs/features/<feature-name>.md`. Cover: what it does, how to trigger it (command palette and any context menu), the output/UX flow, and any file format conventions or edge cases. `README.md` lists all features in a table with a one-line description and links to the doc page.

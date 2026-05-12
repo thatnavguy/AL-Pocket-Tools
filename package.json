@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -35,7 +35,9 @@
     "onLanguage:al",
     "onCommand:al-pocket-tools.bumpVersion",
     "onCommand:al-pocket-tools.nukeAlPackages",
-    "onCommand:al-pocket-tools.syncAlPackages"
+    "onCommand:al-pocket-tools.syncAlPackages",
+    "onCommand:al-pocket-tools.pasteLaunchConfig",
+    "onCommand:al-pocket-tools.saveLaunchConfig"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -91,6 +93,16 @@
         "command": "al-pocket-tools.incrementRevision",
         "title": "Increment Revision Version",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.pasteLaunchConfig",
+        "title": "Paste Launch Configuration",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.saveLaunchConfig",
+        "title": "Save Launch Configuration",
+        "category": "AL Pocket Tools"
       }
     ],
     "menus": {
@@ -104,6 +116,18 @@
           "command": "al-pocket-tools.bumpVersion",
           "when": "resourceFilename == app.json",
           "group": "al-pocket-tools@1"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "al-pocket-tools.pasteLaunchConfig",
+          "when": "resourceFilename == launch.json",
+          "group": "al-pocket-tools@1"
+        },
+        {
+          "command": "al-pocket-tools.saveLaunchConfig",
+          "when": "resourceFilename == launch.json",
+          "group": "al-pocket-tools@2"
         }
       ],
       "view/title": [
@@ -159,6 +183,21 @@
             "Automatically refresh when you switch to a different file in the editor. Only runs when the Region Viewer is visible."
           ],
           "description": "Controls when the Region Viewer updates its content."
+        },
+        "al-pocket-tools.launch.configurations": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "request"],
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "request": { "type": "string" }
+            },
+            "additionalProperties": true
+          },
+          "description": "Saved AL launch configurations. Right-click in launch.json to paste or save configurations."
         }
       }
     }
