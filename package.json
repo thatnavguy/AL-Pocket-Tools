@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -37,7 +37,11 @@
     "onCommand:al-pocket-tools.nukeAlPackages",
     "onCommand:al-pocket-tools.syncAlPackages",
     "onCommand:al-pocket-tools.pasteLaunchConfig",
-    "onCommand:al-pocket-tools.saveLaunchConfig"
+    "onCommand:al-pocket-tools.saveLaunchConfig",
+    "onCommand:al-pocket-tools.clearLaunchConfigs",
+    "onCommand:al-pocket-tools.showProcedureVisibility",
+    "onCommand:al-pocket-tools.changeProcedureVisibility",
+    "onCommand:al-pocket-tools.changeProcedureVisibilityProject"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -103,6 +107,26 @@
         "command": "al-pocket-tools.saveLaunchConfig",
         "title": "Save Launch Configuration",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.clearLaunchConfigs",
+        "title": "Clear Launch Configurations",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.showProcedureVisibility",
+        "title": "Show Procedure Visibility",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.changeProcedureVisibility",
+        "title": "Change Procedure Visibility...",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.changeProcedureVisibilityProject",
+        "title": "Change Procedure Visibility... (Project)",
+        "category": "AL Pocket Tools"
       }
     ],
     "menus": {
@@ -127,6 +151,21 @@
         {
           "command": "al-pocket-tools.saveLaunchConfig",
           "when": "resourceFilename == launch.json",
+          "group": "al-pocket-tools@2"
+        },
+        {
+          "command": "al-pocket-tools.clearLaunchConfigs",
+          "when": "resourceFilename == launch.json",
+          "group": "al-pocket-tools@3"
+        },
+        {
+          "command": "al-pocket-tools.showProcedureVisibility",
+          "when": "resourceExtname == .al",
+          "group": "al-pocket-tools@1"
+        },
+        {
+          "command": "al-pocket-tools.changeProcedureVisibility",
+          "when": "resourceExtname == .al",
           "group": "al-pocket-tools@2"
         }
       ],
@@ -198,6 +237,26 @@
             "additionalProperties": true
           },
           "description": "Saved AL launch configurations. Right-click in launch.json to paste or save configurations."
+        },
+        "al-pocket-tools.procedureVisibility.reportStyle": {
+          "type": "string",
+          "default": "list",
+          "enum": ["list", "dialog"],
+          "enumDescriptions": [
+            "Show a searchable list of all procedures with their visibility and line number. Select a procedure to navigate to it.",
+            "Show a simple counts-only dialog: how many procedures are Local, Internal, and Public."
+          ],
+          "description": "Controls how the Procedure Visibility report is displayed."
+        },
+        "al-pocket-tools.procedureVisibility.confirmationStyle": {
+          "type": "string",
+          "default": "once",
+          "enum": ["once", "perProcedure"],
+          "enumDescriptions": [
+            "Show a single confirmation dialog before changing all procedures at once.",
+            "Confirm each procedure change individually, with Yes / Yes to All / Skip / Cancel options."
+          ],
+          "description": "Controls how procedure visibility changes are confirmed. The project-wide command always uses 'once'."
         }
       }
     }

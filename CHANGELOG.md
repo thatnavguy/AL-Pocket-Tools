@@ -2,6 +2,17 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.6.0] - 2026-05-14
+
+### Added
+
+- **Procedure Visibility** — new feature for inspecting and changing procedure visibility in AL files. Three commands:
+  - `AL Pocket Tools: Show Procedure Visibility` — reports the number of `local`, `internal`, and `public` procedures in the active AL file. In **list** mode (default) shows a searchable list of every procedure with its visibility and line number; selecting one navigates to it. In **dialog** mode shows a simple counts popup. Controlled by the `al-pocket-tools.procedureVisibility.reportStyle` setting (`list` / `dialog`). Available from the editor right-click context menu and Command Palette.
+  - `AL Pocket Tools: Change Procedure Visibility...` — picks a source visibility (showing only those present in the file, with counts), then a target, then changes all matching procedures. Supports all six combinations (local ↔ internal, local ↔ public, internal ↔ public). Confirmation is configurable via `al-pocket-tools.procedureVisibility.confirmationStyle`: `once` (single dialog for the whole batch, default) or `perProcedure` (Yes / Yes to All / Skip / Cancel per procedure). Available from the editor right-click context menu and Command Palette.
+  - `AL Pocket Tools: Change Procedure Visibility... (Project)` — same source/target flow as the file command, then scans all AL files in the workspace and applies changes in a single atomic edit. Always uses single confirmation. Shows a summary of procedures changed and files affected. Available from the Command Palette.
+
+- **Launch Config Manager: Clear Launch Configurations** — new command (`AL Pocket Tools: Clear Launch Configurations`) that sets the `configurations` array in the open `launch.json` to `[]`. Shows a confirmation dialog with the number of entries that will be removed before making any change. Available from the editor right-click context menu and Command Palette.
+
 ## [0.5.0] - 2026-05-13
 
 ### Added

@@ -101,9 +101,29 @@ async function appendConfigToDocument(editor: vscode.TextEditor, config: LaunchC
     const doc = editor.document;
     const content = doc.getText();
 
+    const indentUnit = detectIndentUnit(content);
     const arrayMatch = /"configurations"\s*:\s*\[/.exec(content);
+
     if (!arrayMatch) {
-        vscode.window.showErrorMessage('AL Pocket Tools: Could not find "configurations" array in launch.json.');
+        // "configurations" key is missing — create it before the root closing brace
+        const rootClosing = content.lastIndexOf('}');
+        if (rootClosing === -1) {
+            vscode.window.showErrorMessage('AL Pocket Tools: Could not parse launch.json — check for syntax errors.');
+            return;
+        }
+
+        const rootIndent = indentUnit;
+        const configIndent = rootIndent + indentUnit;
+        const formatted = JSON.stringify(config, null, indentUnit);
+        const indented = configIndent + formatted.split('\n').join('\n' + configIndent);
+
+        const innerContent = stripJsonComments(content.slice(content.indexOf('{') + 1, rootClosing)).trim();
+        const needsComma = innerContent.length > 0 && !innerContent.endsWith(',');
+
+        const insertText = `${needsComma ? ',' : ''}\n${rootIndent}"configurations": [\n${indented}\n${rootIndent}]`;
+        const edit = new vscode.WorkspaceEdit();
+        edit.insert(doc.uri, doc.positionAt(rootClosing), insertText);
+        await vscode.workspace.applyEdit(edit);
         return;
     }
 
@@ -118,7 +138,6 @@ async function appendConfigToDocument(editor: vscode.TextEditor, config: LaunchC
     const closingBracketOffset = idx - 1;
 
     const parentIndent = doc.lineAt(doc.positionAt(arrayMatch.index).line).text.match(/^([ \t]*)/)?.[1] ?? '';
-    const indentUnit = detectIndentUnit(content);
     const configIndent = parentIndent + indentUnit;
 
     const formatted = JSON.stringify(config, null, indentUnit);
@@ -203,6 +222,56 @@ export async function pasteLaunchConfig(): Promise<void> {
 
     await appendConfigToDocument(editor, picked.config);
     vscode.window.showInformationMessage(`AL Pocket Tools: Added "${name ?? 'configuration'}" to launch.json.`);
+}
+
+export async function clearLaunchConfigs(): Promise<void> {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) { return; }
+
+    const content = editor.document.getText();
+    const parsed = parseLaunchJson(content);
+    if (!parsed) {
+        vscode.window.showErrorMessage('AL Pocket Tools: Could not parse launch.json — check for syntax errors.');
+        return;
+    }
+
+    if (parsed.configurations.length === 0) {
+        vscode.window.showInformationMessage('AL Pocket Tools: The configurations array is already empty.');
+        return;
+    }
+
+    const count = parsed.configurations.length;
+    const answer = await vscode.window.showWarningMessage(
+        `This will remove all ${count} configuration${count === 1 ? '' : 's'} from launch.json.`,
+        'Clear', 'Cancel'
+    );
+    if (!answer || answer === 'Cancel') { return; }
+
+    const arrayMatch = /"configurations"\s*:\s*\[/.exec(content);
+    if (!arrayMatch) {
+        vscode.window.showErrorMessage('AL Pocket Tools: Could not find "configurations" array in launch.json.');
+        return;
+    }
+
+    const arrayContentStart = arrayMatch.index + arrayMatch[0].length;
+    let depth = 1;
+    let idx = arrayContentStart;
+    while (idx < content.length && depth > 0) {
+        if (content[idx] === '[') { depth++; }
+        else if (content[idx] === ']') { depth--; }
+        idx++;
+    }
+    const closingBracketOffset = idx - 1;
+
+    const doc = editor.document;
+    const range = new vscode.Range(doc.positionAt(arrayContentStart), doc.positionAt(closingBracketOffset));
+    const edit = new vscode.WorkspaceEdit();
+    edit.replace(doc.uri, range, '');
+    await vscode.workspace.applyEdit(edit);
+
+    vscode.window.showInformationMessage(
+        `AL Pocket Tools: Cleared ${count} configuration${count === 1 ? '' : 's'} from launch.json.`
+    );
 }
 
 export async function saveLaunchConfig(): Promise<void> {

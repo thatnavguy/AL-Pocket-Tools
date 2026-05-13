@@ -3,7 +3,8 @@ import { cleanupAppFiles } from './commands/cleanupAppFiles';
 import { nukeAlPackages } from './commands/nukeAlPackages';
 import { syncAlPackages } from './commands/syncAlPackages';
 import { bumpVersion, incrementVersionPart, VersionStatusBar } from './commands/versionBump';
-import { pasteLaunchConfig, saveLaunchConfig } from './commands/launchConfig';
+import { clearLaunchConfigs, pasteLaunchConfig, saveLaunchConfig } from './commands/launchConfig';
+import { changeProcedureVisibility, changeProcedureVisibilityProject, showProcedureVisibility } from './commands/procedureVisibility';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
 import { PragmaTreeProvider } from './providers/PragmaTreeProvider';
 
@@ -98,6 +99,10 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('al-pocket-tools.incrementRevision', () => { void incrementVersionPart('revision'); }),
         vscode.commands.registerCommand('al-pocket-tools.pasteLaunchConfig', () => { void pasteLaunchConfig(); }),
         vscode.commands.registerCommand('al-pocket-tools.saveLaunchConfig', () => { void saveLaunchConfig(); }),
+        vscode.commands.registerCommand('al-pocket-tools.clearLaunchConfigs', () => { void clearLaunchConfigs(); }),
+        vscode.commands.registerCommand('al-pocket-tools.showProcedureVisibility', () => { void showProcedureVisibility(); }),
+        vscode.commands.registerCommand('al-pocket-tools.changeProcedureVisibility', () => { void changeProcedureVisibility(); }),
+        vscode.commands.registerCommand('al-pocket-tools.changeProcedureVisibilityProject', () => { void changeProcedureVisibilityProject(); }),
     );
 }
 

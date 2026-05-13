@@ -13,6 +13,7 @@ A collection of tools for AL (Business Central Application Language) development
 | [Nuke .alpackages](docs/features/nuke-alpackages.md) | Deletes all `.app` files from every `.alpackages` folder in the workspace to force a clean re-download of dependencies. |
 | [Sync .alpackages to Latest](docs/features/sync-alpackages.md) | Finds the newest version of each app across all `.alpackages` folders, removes older copies, and propagates the latest version to any folder that was behind. |
 | [Launch Config Manager](docs/features/launch-config-manager.md) | Save AL launch configurations to user settings and paste them into any project's `launch.json` via a right-click context menu. |
+| [Procedure Visibility](docs/features/procedure-visibility.md) | Report local / internal / public procedure counts in an AL file, navigate to any procedure, and bulk-change procedures between any visibility — in the current file or across the whole project. |
 
 ## Requirements
 
