@@ -2,6 +2,8 @@
 
 A collection of tools for AL (Business Central Application Language) development in VS Code.
 
+![Cleanup Duplicate Apps](./image/CleanupDuplicateApp.gif)
+
 ![Pragma Viewer](./image/PragmaViewer.gif)
 
 ![Report Viewer](./image/ReportViewer.gif)

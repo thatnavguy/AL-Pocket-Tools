@@ -1,5 +1,7 @@
 # Cleanup Duplicate App Files
 
+![Cleanup Duplicate Apps](../../image/CleanupDuplicateApp.gif)
+
 Scans your repository for duplicate AL `.app` files and deletes older versions, keeping only the latest of each app.
 
 ## How to use
