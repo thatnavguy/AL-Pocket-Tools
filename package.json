@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -127,6 +127,12 @@
         "command": "al-pocket-tools.changeProcedureVisibilityProject",
         "title": "Change Procedure Visibility... (Project)",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.refreshReportViewer",
+        "title": "Refresh",
+        "icon": "$(refresh)",
+        "category": "AL Pocket Tools"
       }
     ],
     "menus": {
@@ -179,6 +185,11 @@
           "command": "al-pocket-tools.refreshPragmaViewer",
           "when": "view == al-pocket-tools.pragmaViewer",
           "group": "navigation"
+        },
+        {
+          "command": "al-pocket-tools.refreshReportViewer",
+          "when": "view == al-pocket-tools.reportViewer",
+          "group": "navigation"
         }
       ]
     },
@@ -191,6 +202,10 @@
         {
           "id": "al-pocket-tools.pragmaViewer",
           "name": "Pragma Viewer"
+        },
+        {
+          "id": "al-pocket-tools.reportViewer",
+          "name": "Report Viewer"
         }
       ]
     },
@@ -208,6 +223,10 @@
       {
         "view": "al-pocket-tools.pragmaViewer",
         "contents": "No pragma directives found in the workspace.\n\n[Refresh](command:al-pocket-tools.refreshPragmaViewer)"
+      },
+      {
+        "view": "al-pocket-tools.reportViewer",
+        "contents": "Open an AL report file to see its structure.\n\n[Refresh](command:al-pocket-tools.refreshReportViewer)"
       }
     ],
     "configuration": {
@@ -257,6 +276,11 @@
             "Confirm each procedure change individually, with Yes / Yes to All / Skip / Cancel options."
           ],
           "description": "Controls how procedure visibility changes are confirmed. The project-wide command always uses 'once'."
+        },
+        "al-pocket-tools.reportViewer.showVarDeclarations": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled, the Report Viewer expands the var section to list individual variable declarations. When disabled (default), only the var section header is shown with a count."
         }
       }
     }

@@ -1,6 +1,6 @@
 # Pragma Viewer
 
-![Pragma Viewer](../../image/PragmaViewer.png)
+![Pragma Viewer](../../image/PragmaViewer.gif)
 
 Shows all pragma directives across the entire AL workspace as a three-level navigable tree. Click any occurrence to jump to it in the editor.
 
@@ -9,6 +9,8 @@ Shows all pragma directives across the entire AL workspace as a three-level navi
 Open the **Pragma Viewer** panel in the Explorer sidebar. On first open it scans all AL files in the workspace automatically. Click any line entry to navigate to that pragma in the editor.
 
 Use the **Refresh** button (↺) in the panel header to re-scan the workspace at any time.
+
+![Pragma Viewer](../../image/PragmaViewer.png)
 
 ## What it does
 

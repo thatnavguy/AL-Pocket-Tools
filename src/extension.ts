@@ -7,11 +7,13 @@ import { clearLaunchConfigs, pasteLaunchConfig, saveLaunchConfig } from './comma
 import { changeProcedureVisibility, changeProcedureVisibilityProject, showProcedureVisibility } from './commands/procedureVisibility';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
 import { PragmaTreeProvider } from './providers/PragmaTreeProvider';
+import { ReportTreeProvider } from './providers/ReportTreeProvider';
 
 export function activate(context: vscode.ExtensionContext) {
     const output = vscode.window.createOutputChannel('AL Pocket Tools');
     const regionProvider = new RegionTreeProvider();
     const pragmaProvider = new PragmaTreeProvider();
+    const reportProvider = new ReportTreeProvider();
 
     new VersionStatusBar(context);
 
@@ -23,6 +25,17 @@ export function activate(context: vscode.ExtensionContext) {
     const pragmaView = vscode.window.createTreeView('al-pocket-tools.pragmaViewer', {
         treeDataProvider: pragmaProvider,
         showCollapseAll: true,
+    });
+
+    const reportView = vscode.window.createTreeView('al-pocket-tools.reportViewer', {
+        treeDataProvider: reportProvider,
+        showCollapseAll: true,
+    });
+
+    const reportEditorListener = vscode.window.onDidChangeActiveTextEditor(editor => {
+        if (reportView.visible) {
+            reportProvider.refresh(editor?.document);
+        }
     });
 
     // Swap in/out the onDidChangeActiveTextEditor listener based on the refreshMode setting.
@@ -53,6 +66,8 @@ export function activate(context: vscode.ExtensionContext) {
         output,
         regionView,
         pragmaView,
+        reportView,
+        reportEditorListener,
         { dispose: () => autoRefreshDisposable?.dispose() },
         vscode.workspace.onDidChangeConfiguration(e => {
             if (e.affectsConfiguration('al-pocket-tools.regionViewer.refreshMode')) {
@@ -60,6 +75,9 @@ export function activate(context: vscode.ExtensionContext) {
                 if (regionView.visible) {
                     regionProvider.refresh(vscode.window.activeTextEditor?.document);
                 }
+            }
+            if (e.affectsConfiguration('al-pocket-tools.reportViewer.showVarDeclarations')) {
+                reportProvider.refresh(vscode.window.activeTextEditor?.document);
             }
         }),
         vscode.commands.registerCommand(
@@ -91,6 +109,10 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             'al-pocket-tools.refreshPragmaViewer',
             () => { void pragmaProvider.scan(); }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.refreshReportViewer',
+            () => { reportProvider.refresh(vscode.window.activeTextEditor?.document); }
         ),
         vscode.commands.registerCommand('al-pocket-tools.bumpVersion', () => { void bumpVersion(); }),
         vscode.commands.registerCommand('al-pocket-tools.incrementMajor', () => { void incrementVersionPart('major'); }),

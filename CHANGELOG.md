@@ -2,7 +2,24 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
-## [0.6.0] - 2026-05-14
+## [0.7.0] - 2026-05-18
+
+### Added
+
+- **Report Viewer** — new tree view panel in the Explorer sidebar that parses the active AL report file and displays its structure as a navigable tree. Sections shown:
+  - **dataset** — all dataitem declarations, nested recursively.
+  - **requestpage** — click to jump to the `requestpage` block.
+  - **rendering** — each layout entry with its name and type (RDLC / Word / Excel).
+  - **labels** — all `Name: Label '...'` declarations inside the labels block.
+  - **triggers** — report-level triggers (`OnPreReport`, `OnPostReport`, `OnInitReport`, `OnPreRendering`, `OnPostRendering`).
+  - **var** — by default shows a single node with a count of variables and click-to-navigate (e.g. `28 variables`). Enable `al-pocket-tools.reportViewer.showVarDeclarations` to expand the full list.
+  - **procedures** — all procedures defined directly on the report object.
+  - Clicking any tree node navigates to its declaration in the editor.
+  - The view loads once when an AL report file becomes active and does not auto-refresh. Use the **Refresh** button in the view title bar to re-parse. The view does not load when it is hidden.
+
+### Changed
+
+- **Report Viewer: `al-pocket-tools.reportViewer.showVarDeclarations`** — new boolean setting (default `false`). When `false`, the var section shows as a single leaf node with a variable count. When `true`, every variable declaration is listed as a child node. Changing the setting immediately re-parses the active report.
 
 ### Added
 
