@@ -239,6 +239,91 @@ function parseDataItems(
 }
 
 /**
+ * Parses trigger items inside a single `add(...)` or `modify(...)` block
+ * in a report extension dataset.
+ */
+function parseExtBlockChildren(lines: string[], openBraceLine: number, uri: vscode.Uri): TriggerItem[] {
+    const results: TriggerItem[] = [];
+    let depth = 0;
+    let i = openBraceLine + 1;
+
+    while (i < lines.length) {
+        const raw = lines[i];
+        const trimmed = raw.trimStart();
+        const opens = (raw.match(/\{/g) ?? []).length;
+        const closes = (raw.match(/\}/g) ?? []).length;
+
+        if (depth === 0) {
+            if (trimmed.startsWith('}')) { break; }
+
+            const triggerMatch = trimmed.match(/^trigger\s+(\w+)\s*\(/i);
+            if (triggerMatch) {
+                results.push(new TriggerItem(triggerMatch[1], i, uri));
+                let bDepth = 0;
+                for (let j = i; j < lines.length; j++) {
+                    const t = lines[j].trimStart();
+                    if (/^begin\b/i.test(t)) { bDepth++; }
+                    if (bDepth > 0 && /^end\s*;/i.test(t)) {
+                        bDepth--;
+                        if (bDepth <= 0) { i = j; break; }
+                    }
+                }
+                i++;
+                continue;
+            }
+        }
+
+        depth += opens - closes;
+        i++;
+    }
+
+    return results;
+}
+
+/**
+ * Parses `add(DataItem)` and `modify(DataItem)` blocks in the dataset section
+ * of a `reportextension`. Each block becomes a DataItemItem whose description
+ * is "add" or "modify" and whose children are the triggers inside the block.
+ */
+function parseDatasetExtension(lines: string[], openBraceLine: number, uri: vscode.Uri): DataItemItem[] {
+    const results: DataItemItem[] = [];
+    let depth = 0;
+    let i = openBraceLine + 1;
+
+    while (i < lines.length) {
+        const raw = lines[i];
+        const trimmed = raw.trimStart();
+        const opens = (raw.match(/\{/g) ?? []).length;
+        const closes = (raw.match(/\}/g) ?? []).length;
+
+        if (depth === 0) {
+            if (trimmed.startsWith('}')) { break; }
+
+            const extMatch = trimmed.match(/^(add|modify)\s*\(\s*"?([^"\;)]+)"?\s*\)/i);
+            if (extMatch) {
+                const kind = extMatch[1].toLowerCase();
+                const name = extMatch[2].trim();
+                let braceStart = i;
+                if (!raw.includes('{')) {
+                    while (braceStart < lines.length && !lines[braceStart].includes('{')) {
+                        braceStart++;
+                    }
+                }
+                const children = parseExtBlockChildren(lines, braceStart, uri);
+                results.push(new DataItemItem(name, kind, i, children, uri));
+                i = findClosingBrace(lines, braceStart) + 1;
+                continue;
+            }
+        }
+
+        depth += opens - closes;
+        i++;
+    }
+
+    return results;
+}
+
+/**
  * Returns the line index of the `}` that closes the block opened at
  * `openBraceLine`. The opening `{` may appear anywhere on that line.
  */
@@ -260,24 +345,33 @@ function findClosingBrace(lines: string[], openBraceLine: number): number {
  * document is not an AL report.
  */
 export function parseReport(document: vscode.TextDocument, showVarDeclarations = false): ReportSectionItem[] | null {
-    if (document.languageId !== 'al') {
+    // Accept .al files and .dal files (decompiled AL from .app packages opened via Go to Definition)
+    const isAlContent = document.languageId === 'al' || document.fileName.endsWith('.dal');
+    if (!isAlContent) {
         return null;
     }
 
     const text = document.getText();
     const lines = text.split(/\r?\n/);
 
-    // Quick check: first non-blank line must start with "report <number>"
-    const firstContent = lines.find(l => l.trim().length > 0);
-    if (!firstContent?.match(/^\s*report\s+\d+/i)) {
+    // Quick check: first meaningful line (skipping namespace/using) must start with "report <number>" or "reportextension <number>"
+    const firstContent = lines.find(l => {
+        const t = l.trim();
+        // Skip blank lines, namespace/using declarations, preprocessor directives (#if, #pragma, etc.),
+        // line comments (// and ///), and block comment lines (/* ... */)
+        return t.length > 0 && !/^(namespace\b|using\b|\/\/|#|\/\*|\*)/i.test(t);
+    });
+    if (!firstContent?.match(/^\s*report(extension)?\s+\d+/i)) {
         return null;
     }
+    const isExtension = /^\s*reportextension\s+\d+/i.test(firstContent ?? '');
 
     const uri = document.uri;
 
     // ── State machine ────────────────────────────────────────────────────────
     const dataItems: (DataItemItem | TriggerItem)[] = [];
     let requestPageLine = -1;
+    const requestPageTriggers: TriggerItem[] = [];
     const layouts: LayoutItem[] = [];
     const labelItems: LabelItem[] = [];
     let labelsLine = -1;
@@ -314,7 +408,9 @@ export function parseReport(document: vscode.TextDocument, showVarDeclarations =
                         braceStart++;
                     }
                 }
-                const children = parseDataItems(lines, braceStart, uri);
+                const children = isExtension
+                    ? parseDatasetExtension(lines, braceStart, uri)
+                    : parseDataItems(lines, braceStart, uri);
                 dataItems.push(...children);
                 i = findClosingBrace(lines, braceStart);
                 depth = 1; // reset depth after jumping past the block
@@ -330,7 +426,20 @@ export function parseReport(document: vscode.TextDocument, showVarDeclarations =
                         braceStart++;
                     }
                 }
-                i = findClosingBrace(lines, braceStart);
+                // Scan at depth 1 for requestpage-level triggers (OnInit, OnOpenPage, etc.)
+                let rpDepth = 0;
+                for (let j = braceStart; j < lines.length; j++) {
+                    const rpRaw = lines[j];
+                    rpDepth += (rpRaw.match(/\{/g) ?? []).length;
+                    rpDepth -= (rpRaw.match(/\}/g) ?? []).length;
+                    if (rpDepth <= 0) { i = j; break; }
+                    if (rpDepth === 1) {
+                        const rpTrigMatch = rpRaw.trimStart().match(/^trigger\s+(\w+)\s*\(/i);
+                        if (rpTrigMatch) {
+                            requestPageTriggers.push(new TriggerItem(rpTrigMatch[1], j, uri));
+                        }
+                    }
+                }
                 depth = 1;
                 continue;
             }
@@ -481,15 +590,8 @@ export function parseReport(document: vscode.TextDocument, showVarDeclarations =
     }
 
     if (requestPageLine >= 0) {
-        const rpNav = new DataItemItem('requestpage', '', requestPageLine, [], uri);
-        // Override the description/icon for the requestpage nav node
-        rpNav.description = undefined;
-        rpNav.iconPath = new vscode.ThemeIcon('settings');
-        rpNav.tooltip = `requestpage — line ${requestPageLine + 1}`;
-        rpNav.contextValue = 'reportRequestPage';
-        // Section with one child (the nav node)
-        const rpSection = new ReportSectionItem('requestpage', [rpNav], 'settings');
-        sections.push(rpSection);
+        // Use the section item's own command for navigation; triggers (if any) are children.
+        sections.push(new ReportSectionItem('requestpage', requestPageTriggers, 'settings', requestPageLine, uri));
     }
 
     if (layouts.length > 0) {

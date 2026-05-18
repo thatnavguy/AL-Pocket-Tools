@@ -2,6 +2,19 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.8.0] - 2026-05-18
+
+### Added
+
+- **Report Viewer: requestpage triggers** — `OnInit`, `OnOpenPage`, `OnClosePage`, and any other triggers defined inside the `requestpage` block are now shown as children of the `requestpage` section, each navigable by click.
+- **Report Viewer: report extension support** — `.al` files that start with `reportextension` are now parsed. The `dataset` section shows each `add(DataItem)` and `modify(DataItem)` entry (description shows `add` or `modify`), with any triggers defined inside listed as children.
+- **Report Viewer: Refresh Mode setting** (`al-pocket-tools.reportViewer.refreshMode`) — choose between `manual` (Refresh button only, default) and `onOpenFile` (auto-refreshes when switching to a different file, only while the view is visible). The welcome message in the view updates to match the active mode.
+- **Report Viewer: `.dal` file support** — decompiled AL files opened via Go to Definition from `.app` packages (`.dal` extension) are now recognised and can be refreshed manually.
+
+### Fixed
+
+- **Report Viewer: namespace / using / comment headers** — files that begin with `namespace`, `using`, `//` line comments, `///` doc comments, `#if`/`#pragma` preprocessor directives, or `/* */` block comment lines are now correctly identified as report files instead of being silently ignored.
+
 ## [0.7.0] - 2026-05-18
 
 ### Added

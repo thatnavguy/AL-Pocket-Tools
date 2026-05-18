@@ -32,13 +32,30 @@ export function activate(context: vscode.ExtensionContext) {
         showCollapseAll: true,
     });
 
-    const reportEditorListener = vscode.window.onDidChangeActiveTextEditor(editor => {
-        if (reportView.visible) {
-            reportProvider.refresh(editor?.document);
-        }
-    });
+    // Swap in/out the onDidChangeActiveTextEditor listener based on the refreshMode settings.
+    let reportAutoRefreshDisposable: vscode.Disposable | undefined;
 
-    // Swap in/out the onDidChangeActiveTextEditor listener based on the refreshMode setting.
+    const applyReportRefreshMode = () => {
+        reportAutoRefreshDisposable?.dispose();
+        const mode = vscode.workspace
+            .getConfiguration('al-pocket-tools')
+            .get<string>('reportViewer.refreshMode', 'manual');
+
+        void vscode.commands.executeCommand('setContext', 'al-pocket-tools:reportViewerMode', mode);
+
+        if (mode === 'onOpenFile') {
+            reportAutoRefreshDisposable = vscode.window.onDidChangeActiveTextEditor(editor => {
+                if (reportView.visible) {
+                    reportProvider.refresh(editor?.document);
+                }
+            });
+        } else {
+            reportAutoRefreshDisposable = undefined;
+        }
+    };
+
+    applyReportRefreshMode();
+
     let autoRefreshDisposable: vscode.Disposable | undefined;
 
     const applyRefreshMode = () => {
@@ -67,13 +84,19 @@ export function activate(context: vscode.ExtensionContext) {
         regionView,
         pragmaView,
         reportView,
-        reportEditorListener,
+        { dispose: () => reportAutoRefreshDisposable?.dispose() },
         { dispose: () => autoRefreshDisposable?.dispose() },
         vscode.workspace.onDidChangeConfiguration(e => {
             if (e.affectsConfiguration('al-pocket-tools.regionViewer.refreshMode')) {
                 applyRefreshMode();
                 if (regionView.visible) {
                     regionProvider.refresh(vscode.window.activeTextEditor?.document);
+                }
+            }
+            if (e.affectsConfiguration('al-pocket-tools.reportViewer.refreshMode')) {
+                applyReportRefreshMode();
+                if (reportView.visible) {
+                    reportProvider.refresh(vscode.window.activeTextEditor?.document);
                 }
             }
             if (e.affectsConfiguration('al-pocket-tools.reportViewer.showVarDeclarations')) {
