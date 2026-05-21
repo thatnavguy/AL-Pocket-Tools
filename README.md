@@ -1,5 +1,7 @@
 # AL Pocket Tools
 
+[![Install from VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-Install-blue?logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=TeddyHerryanto.al-pocket-tools)
+
 A collection of tools for AL (Business Central Application Language) development in VS Code.
 
 - Cleanup Duplicate Apps

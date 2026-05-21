@@ -15,7 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
     const pragmaProvider = new PragmaTreeProvider();
     const reportProvider = new ReportTreeProvider();
 
-    new VersionStatusBar(context);
+    const versionStatusBar = new VersionStatusBar(context);
 
     const regionView = vscode.window.createTreeView('al-pocket-tools.regionViewer', {
         treeDataProvider: regionProvider,
@@ -137,11 +137,11 @@ export function activate(context: vscode.ExtensionContext) {
             'al-pocket-tools.refreshReportViewer',
             () => { reportProvider.refresh(vscode.window.activeTextEditor?.document); }
         ),
-        vscode.commands.registerCommand('al-pocket-tools.bumpVersion', () => { void bumpVersion(); }),
-        vscode.commands.registerCommand('al-pocket-tools.incrementMajor', () => { void incrementVersionPart('major'); }),
-        vscode.commands.registerCommand('al-pocket-tools.incrementMinor', () => { void incrementVersionPart('minor'); }),
-        vscode.commands.registerCommand('al-pocket-tools.incrementBuild', () => { void incrementVersionPart('build'); }),
-        vscode.commands.registerCommand('al-pocket-tools.incrementRevision', () => { void incrementVersionPart('revision'); }),
+        vscode.commands.registerCommand('al-pocket-tools.bumpVersion', async () => { await bumpVersion(); versionStatusBar.refresh(); }),
+        vscode.commands.registerCommand('al-pocket-tools.incrementMajor', async () => { await incrementVersionPart('major'); versionStatusBar.refresh(); }),
+        vscode.commands.registerCommand('al-pocket-tools.incrementMinor', async () => { await incrementVersionPart('minor'); versionStatusBar.refresh(); }),
+        vscode.commands.registerCommand('al-pocket-tools.incrementBuild', async () => { await incrementVersionPart('build'); versionStatusBar.refresh(); }),
+        vscode.commands.registerCommand('al-pocket-tools.incrementRevision', async () => { await incrementVersionPart('revision'); versionStatusBar.refresh(); }),
         vscode.commands.registerCommand('al-pocket-tools.pasteLaunchConfig', () => { void pasteLaunchConfig(); }),
         vscode.commands.registerCommand('al-pocket-tools.saveLaunchConfig', () => { void saveLaunchConfig(); }),
         vscode.commands.registerCommand('al-pocket-tools.clearLaunchConfigs', () => { void clearLaunchConfigs(); }),

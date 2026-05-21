@@ -2,6 +2,16 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.8.1] - 2026-05-21
+
+### Fixed
+
+- **Version Bump: status bar immediate refresh** — after running any version bump command (`Bump Version`, `Increment Major/Minor/Build/Revision`), the version status bar now updates immediately instead of waiting for an editor switch or file save.
+
+### Changed
+
+- **README: VS Marketplace badge** — added an install badge linking to the extension's marketplace page.
+
 ## [0.8.0] - 2026-05-18
 
 ### Added

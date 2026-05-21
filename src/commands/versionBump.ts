@@ -279,6 +279,10 @@ export class VersionStatusBar {
         return appJsonUri;
     }
 
+    public refresh(): void {
+        void this.update(vscode.window.activeTextEditor);
+    }
+
     private async update(editor: vscode.TextEditor | undefined): Promise<void> {
         const appJsonUri = await this.resolveAppJson(editor);
 

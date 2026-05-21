@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
