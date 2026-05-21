@@ -5,6 +5,7 @@ import { syncAlPackages } from './commands/syncAlPackages';
 import { bumpVersion, incrementVersionPart, VersionStatusBar } from './commands/versionBump';
 import { clearLaunchConfigs, pasteLaunchConfig, saveLaunchConfig } from './commands/launchConfig';
 import { changeProcedureVisibility, changeProcedureVisibilityProject, showProcedureVisibility } from './commands/procedureVisibility';
+import { RainbowIndentController } from './commands/rainbowIndent';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
 import { PragmaTreeProvider } from './providers/PragmaTreeProvider';
 import { ReportTreeProvider } from './providers/ReportTreeProvider';
@@ -16,6 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
     const reportProvider = new ReportTreeProvider();
 
     const versionStatusBar = new VersionStatusBar(context);
+    const rainbowIndent = new RainbowIndentController();
 
     const regionView = vscode.window.createTreeView('al-pocket-tools.regionViewer', {
         treeDataProvider: regionProvider,
@@ -148,6 +150,8 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('al-pocket-tools.showProcedureVisibility', () => { void showProcedureVisibility(); }),
         vscode.commands.registerCommand('al-pocket-tools.changeProcedureVisibility', () => { void changeProcedureVisibility(); }),
         vscode.commands.registerCommand('al-pocket-tools.changeProcedureVisibilityProject', () => { void changeProcedureVisibilityProject(); }),
+        vscode.commands.registerCommand('al-pocket-tools.toggleRainbowIndent', () => { rainbowIndent.toggle(); }),
+        rainbowIndent,
     );
 }
 

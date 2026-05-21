@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -41,7 +41,8 @@
     "onCommand:al-pocket-tools.clearLaunchConfigs",
     "onCommand:al-pocket-tools.showProcedureVisibility",
     "onCommand:al-pocket-tools.changeProcedureVisibility",
-    "onCommand:al-pocket-tools.changeProcedureVisibilityProject"
+    "onCommand:al-pocket-tools.changeProcedureVisibilityProject",
+    "onCommand:al-pocket-tools.toggleRainbowIndent"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -133,6 +134,18 @@
         "title": "Refresh",
         "icon": "$(refresh)",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.toggleRainbowIndent",
+        "title": "Toggle Rainbow Indent",
+        "category": "AL Pocket Tools"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "al-pocket-tools.toggleRainbowIndent",
+        "key": "ctrl+shift+i",
+        "mac": "cmd+shift+i"
       }
     ],
     "menus": {
@@ -297,6 +310,16 @@
           "type": "boolean",
           "default": false,
           "description": "When enabled, the Report Viewer expands the var section to list individual variable declarations. When disabled (default), only the var section header is shown with a count."
+        },
+        "al-pocket-tools.rainbowIndent.onEditorSwitch": {
+          "type": "string",
+          "default": "autoHide",
+          "enum": ["autoHide", "follow"],
+          "enumDescriptions": [
+            "Rainbow indent is dismissed when you switch to a different editor tab.",
+            "Rainbow indent follows you to the new editor tab and re-applies there."
+          ],
+          "description": "Controls what happens to Rainbow Indent when you switch to a different editor tab. Typing always dismisses it regardless of this setting."
         }
       }
     }

@@ -1,6 +1,6 @@
 ### AI ###
 *.env
-.ai/
+!.ai/
 .github/agents
 
 ### Node ###

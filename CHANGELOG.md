@@ -2,6 +2,13 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.9.0] - 2026-05-22
+
+### Added
+
+- **Rainbow Indent** — highlights each indentation level in the active editor with a distinct background color. Press `Ctrl+Shift+I` (`Cmd+Shift+I` on Mac) to show; the highlight dismisses automatically the moment you type anything. Pressing the keybinding again before typing also dismisses it manually. Six semi-transparent colors (teal, green, amber, pink-red, blue, purple) cycle across indent levels, tuned for dark themes. Indent width is auto-detected from the file's `editor.tabSize` / `editor.insertSpaces` settings.
+  - New setting `al-pocket-tools.rainbowIndent.onEditorSwitch` (`autoHide` / `follow`, default `autoHide`) controls whether the highlight is dismissed or re-applied when switching to a different editor tab.
+
 ## [0.8.1] - 2026-05-21
 
 ### Fixed
