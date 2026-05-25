@@ -30,6 +30,7 @@ A collection of tools for AL (Business Central Application Language) development
 | [Procedure Visibility](docs/features/procedure-visibility.md) | Report local / internal / public procedure counts in an AL file, navigate to any procedure, and bulk-change procedures between any visibility — in the current file or across the whole project. |
 | [Report Viewer](docs/features/report-viewer.md) | Navigable tree of data items, triggers, request page, rendering layouts, global variables, and procedures in the active AL report file. Loads once on file open; manual refresh only. |
 | [Rainbow Indent](docs/features/rainbow-indent.md) | Highlights each indentation level with a distinct rainbow color. Toggle on/off with `Ctrl+Shift+I`. Updates live as you type. |
+| [Project Overview](docs/features/project-overview.md) | Scans all AL files and generates `ProjectOverview.md` (object counts, complexity summary, top 10 most complex) and `ALObjectList.md` (full object list with ID, caption, and complexity rating). |
 
 ## Requirements
 

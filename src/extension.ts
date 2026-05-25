@@ -6,6 +6,7 @@ import { bumpVersion, incrementVersionPart, VersionStatusBar } from './commands/
 import { clearLaunchConfigs, pasteLaunchConfig, saveLaunchConfig } from './commands/launchConfig';
 import { changeProcedureVisibility, changeProcedureVisibilityProject, showProcedureVisibility } from './commands/procedureVisibility';
 import { RainbowIndentController } from './commands/rainbowIndent';
+import { generateProjectOverview } from './commands/projectOverview';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
 import { PragmaTreeProvider } from './providers/PragmaTreeProvider';
 import { ReportTreeProvider } from './providers/ReportTreeProvider';
@@ -151,6 +152,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('al-pocket-tools.changeProcedureVisibility', () => { void changeProcedureVisibility(); }),
         vscode.commands.registerCommand('al-pocket-tools.changeProcedureVisibilityProject', () => { void changeProcedureVisibilityProject(); }),
         vscode.commands.registerCommand('al-pocket-tools.toggleRainbowIndent', () => { rainbowIndent.toggle(); }),
+        vscode.commands.registerCommand('al-pocket-tools.generateProjectOverview', () => { void generateProjectOverview(output); }),
         rainbowIndent,
     );
 }
