@@ -2,6 +2,28 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.10.0] - 2026-05-27
+
+### Added
+
+- **Assignment Tracker** — new panel in the AL Pocket Tools sidebar that finds every place a specific AL field or variable is assigned across the workspace or the current file. Four assignment patterns are recognised:
+  - `Validate()` — calls to `.Validate(FieldName, ...)` (icon: event symbol)
+  - `Direct :=` — direct assignment `Record.Field :=` or bare variable `:=` (icon: arrow)
+  - `Compound +=/-=/*=/=` — compound arithmetic assignments (icon: operator symbol)
+  - `TransferFields()` — bulk-copy calls `.TransferFields(...)`, labelled *(bulk assign)* (icon: package)
+  - Results are grouped first by **kind** (Validate / Direct / Compound / TransferFields), then by file, then by line. Only kinds with matches are shown.
+  - Run via **Search Assignments** from the view toolbar, Command Palette, or the right-click context menu in any `.al` file. The field name at the cursor is pre-filled.
+  - **Refresh** re-runs the last search with the same field name and scope.
+  - **Toggle Scope** switches between Workspace and Current File without re-entering the field name.
+  - Leave the field name blank to find **all** assignments in scope regardless of name.
+  - Setting `al-pocket-tools.assignmentTracker.includeTransferFields` (default `true`) controls whether `TransferFields()` hits are included.
+
+- **AL Pocket Tools sidebar** — new activity bar container that groups AL-specific tree views in one place. The sidebar currently hosts **Assignment Tracker** and **Pragma Viewer**. Region Viewer and Report Viewer remain in the Explorer sidebar.
+
+### Changed
+
+- **Pragma Viewer** moved from the Explorer sidebar into the new AL Pocket Tools activity bar sidebar.
+
 ## [0.9.0] - 2026-05-22
 
 ### Added

@@ -6,6 +6,8 @@ import { bumpVersion, incrementVersionPart, VersionStatusBar } from './commands/
 import { clearLaunchConfigs, pasteLaunchConfig, saveLaunchConfig } from './commands/launchConfig';
 import { changeProcedureVisibility, changeProcedureVisibilityProject, showProcedureVisibility } from './commands/procedureVisibility';
 import { RainbowIndentController } from './commands/rainbowIndent';
+import { searchAssignments, refreshAssignmentTracker, toggleAssignmentTrackerScope } from './commands/assignmentTracker';
+import { AssignmentTrackerProvider } from './providers/AssignmentTrackerProvider';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
 import { PragmaTreeProvider } from './providers/PragmaTreeProvider';
 import { ReportTreeProvider } from './providers/ReportTreeProvider';
@@ -16,6 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
     const pragmaProvider = new PragmaTreeProvider();
     const reportProvider = new ReportTreeProvider();
 
+    const assignmentProvider = new AssignmentTrackerProvider();
     const versionStatusBar = new VersionStatusBar(context);
     const rainbowIndent = new RainbowIndentController();
 
@@ -31,6 +34,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     const reportView = vscode.window.createTreeView('al-pocket-tools.reportViewer', {
         treeDataProvider: reportProvider,
+        showCollapseAll: true,
+    });
+
+    const assignmentTrackerView = vscode.window.createTreeView('al-pocket-tools.assignmentTracker', {
+        treeDataProvider: assignmentProvider,
         showCollapseAll: true,
     });
 
@@ -86,6 +94,7 @@ export function activate(context: vscode.ExtensionContext) {
         regionView,
         pragmaView,
         reportView,
+        assignmentTrackerView,
         { dispose: () => reportAutoRefreshDisposable?.dispose() },
         { dispose: () => autoRefreshDisposable?.dispose() },
         vscode.workspace.onDidChangeConfiguration(e => {
@@ -151,6 +160,28 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('al-pocket-tools.changeProcedureVisibility', () => { void changeProcedureVisibility(); }),
         vscode.commands.registerCommand('al-pocket-tools.changeProcedureVisibilityProject', () => { void changeProcedureVisibilityProject(); }),
         vscode.commands.registerCommand('al-pocket-tools.toggleRainbowIndent', () => { rainbowIndent.toggle(); }),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.searchAssignments',
+            () => { void searchAssignments(assignmentProvider, assignmentTrackerView); }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.refreshAssignmentTracker',
+            () => { void refreshAssignmentTracker(assignmentProvider, assignmentTrackerView); }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.toggleAssignmentTrackerScope',
+            () => { void toggleAssignmentTrackerScope(assignmentProvider, assignmentTrackerView); }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.goToAssignment',
+            async (uri: vscode.Uri, line: number) => {
+                const doc = await vscode.workspace.openTextDocument(uri);
+                const editor = await vscode.window.showTextDocument(doc);
+                const pos = new vscode.Position(line, 0);
+                editor.selection = new vscode.Selection(pos, pos);
+                editor.revealRange(new vscode.Range(pos, pos), vscode.TextEditorRevealType.InCenter);
+            }
+        ),
         rainbowIndent,
     );
 }

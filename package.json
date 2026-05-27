@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -42,7 +42,8 @@
     "onCommand:al-pocket-tools.showProcedureVisibility",
     "onCommand:al-pocket-tools.changeProcedureVisibility",
     "onCommand:al-pocket-tools.changeProcedureVisibilityProject",
-    "onCommand:al-pocket-tools.toggleRainbowIndent"
+    "onCommand:al-pocket-tools.toggleRainbowIndent",
+    "onView:al-pocket-tools.assignmentTracker"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -139,6 +140,24 @@
         "command": "al-pocket-tools.toggleRainbowIndent",
         "title": "Toggle Rainbow Indent",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.searchAssignments",
+        "title": "Search Assignments...",
+        "icon": "$(search)",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.refreshAssignmentTracker",
+        "title": "Refresh",
+        "icon": "$(refresh)",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.toggleAssignmentTrackerScope",
+        "title": "Toggle Scope (Workspace / File)",
+        "icon": "$(globe)",
+        "category": "AL Pocket Tools"
       }
     ],
     "keybindings": [
@@ -186,6 +205,11 @@
           "command": "al-pocket-tools.changeProcedureVisibility",
           "when": "resourceExtname == .al",
           "group": "al-pocket-tools@2"
+        },
+        {
+          "command": "al-pocket-tools.searchAssignments",
+          "when": "resourceExtname == .al",
+          "group": "al-pocket-tools@3"
         }
       ],
       "view/title": [
@@ -203,18 +227,48 @@
           "command": "al-pocket-tools.refreshReportViewer",
           "when": "view == al-pocket-tools.reportViewer",
           "group": "navigation"
+        },
+        {
+          "command": "al-pocket-tools.refreshAssignmentTracker",
+          "when": "view == al-pocket-tools.assignmentTracker",
+          "group": "navigation"
+        },
+        {
+          "command": "al-pocket-tools.toggleAssignmentTrackerScope",
+          "when": "view == al-pocket-tools.assignmentTracker",
+          "group": "navigation"
+        },
+        {
+          "command": "al-pocket-tools.searchAssignments",
+          "when": "view == al-pocket-tools.assignmentTracker",
+          "group": "navigation"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "al-pocket-tools",
+          "title": "AL Pocket Tools",
+          "icon": "image/al-pocket-tools-sidebar.png"
         }
       ]
     },
     "views": {
-      "explorer": [
+      "al-pocket-tools": [
         {
-          "id": "al-pocket-tools.regionViewer",
-          "name": "Region Viewer"
+          "id": "al-pocket-tools.assignmentTracker",
+          "name": "Assignment Tracker"
         },
         {
           "id": "al-pocket-tools.pragmaViewer",
           "name": "Pragma Viewer"
+        }
+      ],
+      "explorer": [
+        {
+          "id": "al-pocket-tools.regionViewer",
+          "name": "Region Viewer"
         },
         {
           "id": "al-pocket-tools.reportViewer",
@@ -246,6 +300,10 @@
         "view": "al-pocket-tools.reportViewer",
         "when": "al-pocket-tools:reportViewerMode == onOpenFile",
         "contents": "Open an AL report file to see its structure."
+      },
+      {
+        "view": "al-pocket-tools.assignmentTracker",
+        "contents": "Place your cursor on a field name in an AL file and run Search Assignments, or use the search button above.\n\n[Search Assignments](command:al-pocket-tools.searchAssignments)"
       }
     ],
     "configuration": {
@@ -320,6 +378,11 @@
             "Rainbow indent follows you to the new editor tab and re-applies there."
           ],
           "description": "Controls what happens to Rainbow Indent when you switch to a different editor tab. Typing always dismisses it regardless of this setting."
+        },
+        "al-pocket-tools.assignmentTracker.includeTransferFields": {
+          "type": "boolean",
+          "default": true,
+          "description": "When enabled, TransferFields() calls are included in Assignment Tracker results with a 'bulk assign' indicator. Disable to show only direct assignments and Validate calls."
         }
       }
     }

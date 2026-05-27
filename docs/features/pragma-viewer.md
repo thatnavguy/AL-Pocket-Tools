@@ -6,7 +6,7 @@ Shows all pragma directives across the entire AL workspace as a three-level navi
 
 ## How to use
 
-Open the **Pragma Viewer** panel in the Explorer sidebar. On first open it scans all AL files in the workspace automatically. Click any line entry to navigate to that pragma in the editor.
+Open the **Pragma Viewer** panel in the **AL Pocket Tools** sidebar (activity bar on the left). On first open it scans all AL files in the workspace automatically. Click any line entry to navigate to that pragma in the editor.
 
 Use the **Refresh** button (↺) in the panel header to re-scan the workspace at any time.
 
