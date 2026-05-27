@@ -27,7 +27,7 @@ jobs:
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
-        run: gh release create "v${{ steps.version.outputs.version }}" *.vsix --title "v${{ steps.version.outputs.version }}"
+        run: gh release create "v${{ steps.version.outputs.version }}" *.vsix --title "v${{ steps.version.outputs.version }}" --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
