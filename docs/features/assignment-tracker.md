@@ -24,7 +24,7 @@ Results are displayed in a dedicated sidebar panel, grouped first by **assignmen
 
 ### From the Editor Context Menu
 
-Right-click inside any `.al` file and select **AL Pocket Tools: Search Assignments...**.
+Right-click inside any `.al` file → **AL Pocket Tools** → **Search Assignments...**
 
 ### From the Assignment Tracker Sidebar
 

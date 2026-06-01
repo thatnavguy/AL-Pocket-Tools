@@ -6,12 +6,12 @@ Save and reuse AL launch configurations across projects. Store configurations in
 
 ## How to use
 
-Both commands are available from the **editor context menu** (right-click inside an open `launch.json` file) and from the **Command Palette** (`Ctrl+Shift+P`).
+All commands are available from the **editor context menu** (right-click inside an open `launch.json` file → **AL Pocket Tools** submenu) and from the **Command Palette** (`Ctrl+Shift+P`).
 
 ### Paste a saved configuration
 
 1. Open `.vscode/launch.json` in the editor.
-2. Right-click anywhere and select **AL Pocket Tools: Paste Launch Configuration**.
+2. Right-click → **AL Pocket Tools** → **Paste Launch Configuration**.
 3. Pick a saved configuration from the Quick Pick list.
 4. The configuration is appended to the `configurations` array.
 
@@ -21,7 +21,7 @@ If a configuration with the same `name` already exists in `launch.json`, you wil
 
 1. Open `.vscode/launch.json` in the editor.
 2. Place your cursor inside the configuration object you want to save (optional — the list will highlight it automatically).
-3. Right-click and select **AL Pocket Tools: Save Launch Configuration**.
+3. Right-click → **AL Pocket Tools** → **Save Launch Configuration**.
 4. A Quick Pick lists all configurations in the file. The one your cursor is inside appears at the top with a `← cursor is here` marker.
 5. Select the configuration to save. It is written to your VS Code user settings under `al-pocket-tools.launch.configurations`.
 
@@ -68,7 +68,7 @@ You can also edit this list directly in your user `settings.json` (`Ctrl+Shift+P
 ### Clear all configurations
 
 1. Open `.vscode/launch.json` in the editor.
-2. Right-click anywhere and select **AL Pocket Tools: Clear Launch Configurations**.
+2. Right-click → **AL Pocket Tools** → **Clear Launch Configurations**.
 3. A confirmation prompt shows how many configurations will be removed. Click **Clear** to proceed or **Cancel** to abort.
 4. The `configurations` array is set to `[]`.
 

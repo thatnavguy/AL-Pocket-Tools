@@ -2,6 +2,19 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.11.0] - 2026-06-02
+
+### Added
+
+- **Add SetLoadFields** — new command (right-click → **AL Pocket Tools** → **Add SetLoadFields**, or Command Palette) that analyzes which fields are accessed on a Record variable in the current procedure and inserts a `SetLoadFields` call immediately before the first `Get`/`Find*` retrieval. If a `SetLoadFields` already exists, newly discovered fields are merged in rather than duplicated. Analysis goes **one level deep** into called procedures within the same file (both `var` and by-value parameters) so fields used in helpers are also captured. Supports local variables, procedure parameters, and **global variables** declared at the codeunit/object level. Triggers and `temporary` record declarations are also handled.
+
+- **AL Pocket Tools context submenu** — all editor right-click commands for `.al` files (Add SetLoadFields, Show/Change Procedure Visibility, Search Assignments) and `launch.json` files (Paste/Save/Clear Launch Config) are now grouped under a single **AL Pocket Tools** fly-out submenu instead of appearing as individual top-level items.
+
+### Fixed
+
+- **Global record variables not detected by Add SetLoadFields** — variables declared in a codeunit/object-level `var` section (outside any procedure) are now included in the record variable selection list.
+- **Triggers not recognised** — `trigger` blocks are now parsed alongside `procedure` blocks, so Add SetLoadFields works inside event subscriber triggers and table/page triggers.
+
 ## [0.10.0] - 2026-05-27
 
 ### Added

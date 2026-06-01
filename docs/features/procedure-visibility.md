@@ -6,14 +6,14 @@ Inspect and change the visibility of procedures in AL files. See at a glance how
 
 ## How to use
 
-All commands are available from the **editor context menu** (right-click inside an open `.al` file) and from the **Command Palette** (`Ctrl+Shift+P`). The project-wide command is available from the Command Palette only.
+All commands are available from the **editor context menu** (right-click inside an open `.al` file → **AL Pocket Tools** submenu) and from the **Command Palette** (`Ctrl+Shift+P`). The project-wide command is available from the Command Palette only.
 
 ---
 
 ### Show Procedure Visibility
 
 1. Open any `.al` file in the editor.
-2. Right-click and select **AL Pocket Tools: Show Procedure Visibility**.
+2. Right-click → **AL Pocket Tools** → **Show Procedure Visibility**.
 3. The report is shown in the style configured by `al-pocket-tools.procedureVisibility.reportStyle`.
 
 **List style** (default): A searchable list shows every procedure in the file with its visibility and line number. Selecting a procedure closes the list and jumps the cursor to that line.
@@ -25,7 +25,7 @@ All commands are available from the **editor context menu** (right-click inside 
 ### Change Procedure Visibility (current file)
 
 1. Open an `.al` file in the editor.
-2. Right-click and select **AL Pocket Tools: Change Procedure Visibility...**
+2. Right-click → **AL Pocket Tools** → **Change Procedure Visibility...**
 3. Pick the **source** visibility — only visibilities that have at least one procedure in the file are shown, each with a count.
 4. Pick the **target** visibility (the source is excluded from this list).
 5. Confirm the change according to the `al-pocket-tools.procedureVisibility.confirmationStyle` setting (see below).
@@ -70,8 +70,8 @@ If no procedures of the selected source visibility are found, an info message is
 
 | Command | Palette title | Where |
 |---|---|---|
-| `al-pocket-tools.showProcedureVisibility` | AL Pocket Tools: Show Procedure Visibility | Right-click in `.al` file + Palette |
-| `al-pocket-tools.changeProcedureVisibility` | AL Pocket Tools: Change Procedure Visibility... | Right-click in `.al` file + Palette |
+| `al-pocket-tools.showProcedureVisibility` | AL Pocket Tools: Show Procedure Visibility | Right-click → AL Pocket Tools submenu + Palette |
+| `al-pocket-tools.changeProcedureVisibility` | AL Pocket Tools: Change Procedure Visibility... | Right-click → AL Pocket Tools submenu + Palette |
 | `al-pocket-tools.changeProcedureVisibilityProject` | AL Pocket Tools: Change Procedure Visibility... (Project) | Palette only |
 
 ## Edge cases

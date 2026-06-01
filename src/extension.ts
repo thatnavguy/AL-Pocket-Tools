@@ -7,6 +7,7 @@ import { clearLaunchConfigs, pasteLaunchConfig, saveLaunchConfig } from './comma
 import { changeProcedureVisibility, changeProcedureVisibilityProject, showProcedureVisibility } from './commands/procedureVisibility';
 import { RainbowIndentController } from './commands/rainbowIndent';
 import { searchAssignments, refreshAssignmentTracker, toggleAssignmentTrackerScope } from './commands/assignmentTracker';
+import { addSetLoadFields } from './commands/setLoadFields';
 import { AssignmentTrackerProvider } from './providers/AssignmentTrackerProvider';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
 import { PragmaTreeProvider } from './providers/PragmaTreeProvider';
@@ -181,6 +182,10 @@ export function activate(context: vscode.ExtensionContext) {
                 editor.selection = new vscode.Selection(pos, pos);
                 editor.revealRange(new vscode.Range(pos, pos), vscode.TextEditorRevealType.InCenter);
             }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.addSetLoadFields',
+            () => { void addSetLoadFields(); }
         ),
         rainbowIndent,
     );

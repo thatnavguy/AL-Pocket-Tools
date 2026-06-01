@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -158,6 +158,21 @@
         "title": "Toggle Scope (Workspace / File)",
         "icon": "$(globe)",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.addSetLoadFields",
+        "title": "Add SetLoadFields",
+        "category": "AL Pocket Tools"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "al-pocket-tools.editorAlSubmenu",
+        "label": "AL Pocket Tools"
+      },
+      {
+        "id": "al-pocket-tools.editorLaunchSubmenu",
+        "label": "AL Pocket Tools"
       }
     ],
     "keybindings": [
@@ -182,34 +197,46 @@
       ],
       "editor/context": [
         {
-          "command": "al-pocket-tools.pasteLaunchConfig",
-          "when": "resourceFilename == launch.json",
+          "submenu": "al-pocket-tools.editorAlSubmenu",
+          "when": "resourceExtname == .al",
           "group": "al-pocket-tools@1"
         },
         {
-          "command": "al-pocket-tools.saveLaunchConfig",
+          "submenu": "al-pocket-tools.editorLaunchSubmenu",
           "when": "resourceFilename == launch.json",
-          "group": "al-pocket-tools@2"
-        },
+          "group": "al-pocket-tools@1"
+        }
+      ],
+      "al-pocket-tools.editorAlSubmenu": [
         {
-          "command": "al-pocket-tools.clearLaunchConfigs",
-          "when": "resourceFilename == launch.json",
-          "group": "al-pocket-tools@3"
+          "command": "al-pocket-tools.addSetLoadFields",
+          "group": "1_performance@1"
         },
         {
           "command": "al-pocket-tools.showProcedureVisibility",
-          "when": "resourceExtname == .al",
-          "group": "al-pocket-tools@1"
+          "group": "2_analysis@1"
         },
         {
           "command": "al-pocket-tools.changeProcedureVisibility",
-          "when": "resourceExtname == .al",
-          "group": "al-pocket-tools@2"
+          "group": "2_analysis@2"
         },
         {
           "command": "al-pocket-tools.searchAssignments",
-          "when": "resourceExtname == .al",
-          "group": "al-pocket-tools@3"
+          "group": "3_search@1"
+        }
+      ],
+      "al-pocket-tools.editorLaunchSubmenu": [
+        {
+          "command": "al-pocket-tools.pasteLaunchConfig",
+          "group": "1_launch@1"
+        },
+        {
+          "command": "al-pocket-tools.saveLaunchConfig",
+          "group": "1_launch@2"
+        },
+        {
+          "command": "al-pocket-tools.clearLaunchConfigs",
+          "group": "1_launch@3"
         }
       ],
       "view/title": [
