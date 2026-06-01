@@ -1,5 +1,7 @@
 # Add SetLoadFields
 
+![Add SetLoadFields](../../image/AddSetLoadFields.gif)
+
 ## What it does
 
 Analyzes which fields are accessed on a Record variable within the current procedure (and one level deep into called procedures), then automatically inserts or merges a `SetLoadFields` call before the first database retrieval (`Get`, `FindFirst`, `FindSet`, `FindLast`, `Find`).
