@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.12.0] - 2026-06-02
+
+### Added
+
+- **Parameter Alignment** — toggle procedure declarations between a single-line layout and a vertical layout (one parameter per line, 4-space indent relative to the `procedure` keyword) via the lightbulb code action (`Ctrl+.`) when the cursor is on any line of the declaration. If the signature is already split across lines but inconsistently formatted (e.g. first parameter on the same line as the keyword, irregular indentation), a **Normalize parameter alignment** action appears alongside **Collapse parameters to single line**. Applies to `procedure` and `trigger` declarations with any visibility modifier (`local`, `internal`, `protected`).
+
 ## [0.11.0] - 2026-06-02
 
 ### Added

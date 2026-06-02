@@ -16,6 +16,15 @@ A collection of tools for AL (Business Central Application Language) development
 - Report Viewer
 ![Report Viewer](./image/ReportViewer.gif)
 
+- Rainbow Indent
+![Report Viewer](./image/RainbowIndent.gif)
+
+- Add SetLoadFields
+![Add SetLoadFields](./image/AddSetLoadFields.gif)
+
+- Parameter Alignment
+![Report Viewer](./image/ParameterAlignment.gif)
+
 ## Features
 
 | Feature | Description |
@@ -32,6 +41,7 @@ A collection of tools for AL (Business Central Application Language) development
 | [Rainbow Indent](docs/features/rainbow-indent.md) | Highlights each indentation level with a distinct rainbow color. Toggle on/off with `Ctrl+Shift+I`. Updates live as you type. |
 | [Assignment Tracker](docs/features/assignment-tracker.md) | Finds every place in a file or the whole workspace where a specific AL field is assigned — via `Validate()`, `:=`, or `TransferFields()`. Results appear in a dedicated sidebar with click-to-navigate. |
 | [Add SetLoadFields](docs/features/set-load-fields.md) | Analyzes which fields are accessed on a Record variable and inserts (or merges into) a `SetLoadFields` call before the first database retrieval. Goes one level deep into called procedures. |
+| [Parameter Alignment](docs/features/parameter-alignment.md) | Toggles procedure declarations between a single-line layout and a vertical layout (one parameter per line, 4-space indent). Triggered via the lightbulb on any line of the declaration. |
 
 ## Requirements
 

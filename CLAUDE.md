@@ -57,6 +57,17 @@ Every feature gets a dedicated doc page at `docs/features/<feature-name>.md`. Co
 
 Do not mark a feature task complete until both documentation steps are done.
 
+## Release Checklist
+
+**When the user asks to "bump version", "release", or "add changelog", always do all of the following in order:**
+
+1. **Read `CHANGELOG.md` first** using the `Read` tool — do not use Bash/shell to check for it, as shell path handling is unreliable on this machine. The file lives at `CHANGELOG.md` in the project root.
+2. **Determine the version bump type**: new feature → bump minor (0.X.0); bug fix only → bump patch (0.0.X); breaking change → bump major (X.0.0).
+3. **Update `package.json`** — change the `"version"` field.
+4. **Prepend a new entry to `CHANGELOG.md`** — follow the existing format: `## [X.Y.Z] - YYYY-MM-DD` with `### Added / ### Fixed / ### Changed` subsections as appropriate. Match the level of detail and style of existing entries.
+
+Do not ask the user what the new version number should be — derive it from the bump type and the current version in `package.json`.
+
 ## Post-Feature Performance Checklist
 
 **After completing any new feature, always run a performance impact analysis and report it to the user before marking the task done.**
