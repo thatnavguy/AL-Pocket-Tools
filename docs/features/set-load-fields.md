@@ -39,6 +39,27 @@ Fields used in `SetRange` / `SetFilter` / `SetCurrentKey` are **not** included b
 - If a **`SetLoadFields` already exists**: new fields are merged into the existing call (duplicates are skipped).
 - If **no retrieval call** (`Get`/`Find*`) is found: the generated `SetLoadFields` statement is copied to the clipboard with a warning message.
 
+### ReadIsolation
+
+By default the command also inserts a `ReadIsolation` assignment on the line immediately after `SetLoadFields`:
+
+```al
+LabelSelection.SetLoadFields("Label Template Code", "Type");
+LabelSelection.ReadIsolation := IsolationLevel::ReadUncommitted;
+```
+
+If a `ReadIsolation` assignment already exists for the variable in the procedure, no second one is added.
+
+Control this via **Settings → AL Pocket Tools: Set Load Fields: Read Isolation** (`al-pocket-tools.setLoadFields.readIsolation`):
+
+| Value | Behaviour |
+|---|---|
+| `None` | No `ReadIsolation` line is inserted |
+| `ReadUncommitted` *(default)* | Best performance for read-only lookups — no shared locks |
+| `ReadCommitted` | Avoids dirty reads |
+| `RepeatableRead` | Prevents non-repeatable reads within a transaction |
+| `UpdLock` | Acquires an update lock on rows read — prevents deadlocks before a subsequent write |
+
 ### One-level-deep analysis
 
 When the record is passed to another procedure in the same file:

@@ -318,6 +318,9 @@ function findFieldAccesses(bodyText: string, varName: string): string[] {
     const quotedRegex = new RegExp(`\\b${escaped}\\s*\\.\\s*"([^"]+)"`, 'gi');
     let m: RegExpExecArray | null;
     while ((m = quotedRegex.exec(bodyText)) !== null) {
+        // Skip enum option references: Record."Field"::EnumOption — not a field read
+        const afterMatch = bodyText.slice(m.index + m[0].length).trimStart();
+        if (afterMatch.startsWith('::')) { continue; }
         fields.add(m[1]);
     }
 
@@ -479,6 +482,23 @@ function formatFieldList(fields: string[]): string {
 }
 
 // ---------------------------------------------------------------------------
+// ReadIsolation detection
+// ---------------------------------------------------------------------------
+
+function findExistingReadIsolation(text: string, varName: string, procBodyStart: number, procBodyEnd: number): number | null {
+    const lines = text.split('\n');
+    const escaped = escapeRegExp(varName);
+    const regex = new RegExp(`^\\s*${escaped}\\.ReadIsolation\\s*:=`, 'i');
+
+    for (let i = procBodyStart + 1; i < procBodyEnd; i++) {
+        if (regex.test(lines[i])) {
+            return i;
+        }
+    }
+    return null;
+}
+
+// ---------------------------------------------------------------------------
 // Main command
 // ---------------------------------------------------------------------------
 
@@ -493,6 +513,10 @@ export async function addSetLoadFields(): Promise<void> {
         vscode.window.showWarningMessage('This command only works in AL files.');
         return;
     }
+
+    const config = vscode.workspace.getConfiguration('al-pocket-tools');
+    const readIsolationSetting = config.get<string>('setLoadFields.readIsolation', 'ReadUncommitted');
+    const addReadIsolation = readIsolationSetting !== 'None';
 
     const text = editor.document.getText();
     const cursorLine = editor.selection.active.line;
@@ -577,29 +601,37 @@ export async function addSetLoadFields(): Promise<void> {
 
     const sortedFields = [...allFields].sort((a, b) => a.localeCompare(b));
 
-    // Check for existing SetLoadFields
+    // Check for existing SetLoadFields and ReadIsolation
     const existing = findExistingSetLoadFields(text, selectedRecord.name, currentProc.bodyStart, currentProc.bodyEnd);
+    const existingReadIsolationLine = findExistingReadIsolation(text, selectedRecord.name, currentProc.bodyStart, currentProc.bodyEnd);
 
     if (existing) {
         // Merge: add new fields that aren't already in the existing call
         const existingSet = new Set(existing.fields.map(f => f.toLowerCase()));
         const newFields = sortedFields.filter(f => !existingSet.has(f.toLowerCase()));
 
-        if (newFields.length === 0) {
+        const mergedFields = [...existing.fields, ...newFields].sort((a, b) => a.localeCompare(b));
+        const indent = getIndent(editor.document.lineAt(existing.line).text);
+        const newLine = `${indent}${selectedRecord.name}.SetLoadFields(${formatFieldList(mergedFields)});`;
+        const needsReadIsolation = addReadIsolation && existingReadIsolationLine === null;
+
+        if (newFields.length === 0 && !needsReadIsolation) {
             vscode.window.showInformationMessage('SetLoadFields already contains all accessed fields.');
             return;
         }
 
-        const mergedFields = [...existing.fields, ...newFields].sort((a, b) => a.localeCompare(b));
-        const indent = getIndent(editor.document.lineAt(existing.line).text);
-        const newLine = `${indent}${selectedRecord.name}.SetLoadFields(${formatFieldList(mergedFields)});`;
-
         await editor.edit(editBuilder => {
-            const range = editor.document.lineAt(existing.line).range;
-            editBuilder.replace(range, newLine);
+            editBuilder.replace(editor.document.lineAt(existing.line).range, newLine);
+            if (needsReadIsolation) {
+                const pos = new vscode.Position(existing.line + 1, 0);
+                editBuilder.insert(pos, `${indent}${selectedRecord.name}.ReadIsolation := IsolationLevel::${readIsolationSetting};\n`);
+            }
         });
 
-        vscode.window.showInformationMessage(`Added ${newFields.length} field(s) to SetLoadFields: ${newFields.join(', ')}`);
+        const parts: string[] = [];
+        if (newFields.length > 0) { parts.push(`Added ${newFields.length} field(s): ${newFields.join(', ')}`); }
+        if (needsReadIsolation) { parts.push(`Added ReadIsolation := IsolationLevel::${readIsolationSetting}`); }
+        vscode.window.showInformationMessage(parts.join('. '));
     } else {
         // Insert before the first retrieval call
         const retrievalLine = findFirstRetrievalLine(currentProc.bodyText, selectedRecord.name, currentProc.bodyStart);
@@ -615,15 +647,20 @@ export async function addSetLoadFields(): Promise<void> {
 
         // Determine indent from the retrieval line
         const indent = getIndent(editor.document.lineAt(retrievalLine).text);
-        const setLoadFieldsLine = `${indent}${selectedRecord.name}.SetLoadFields(${formatFieldList(sortedFields)});\n`;
+        let insertText = `${indent}${selectedRecord.name}.SetLoadFields(${formatFieldList(sortedFields)});\n`;
+        if (addReadIsolation && existingReadIsolationLine === null) {
+            insertText += `${indent}${selectedRecord.name}.ReadIsolation := IsolationLevel::${readIsolationSetting};\n`;
+        }
 
         await editor.edit(editBuilder => {
-            const pos = new vscode.Position(retrievalLine, 0);
-            editBuilder.insert(pos, setLoadFieldsLine);
+            editBuilder.insert(new vscode.Position(retrievalLine, 0), insertText);
         });
 
         const deepSources = [...new Set(deepFields.map(f => f.source))];
         let msg = `Added SetLoadFields with ${allFields.size} field(s).`;
+        if (addReadIsolation && existingReadIsolationLine === null) {
+            msg += ` Added ReadIsolation := IsolationLevel::${readIsolationSetting}.`;
+        }
         if (deepSources.length > 0) {
             msg += ` Includes fields from: ${deepSources.join(', ')}`;
         }

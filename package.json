@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -163,6 +163,16 @@
         "command": "al-pocket-tools.addSetLoadFields",
         "title": "Add SetLoadFields",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.removeCaptionSuffix",
+        "title": "Remove Caption Suffix...",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.removeCaptionPrefix",
+        "title": "Remove Caption Prefix...",
+        "category": "AL Pocket Tools"
       }
     ],
     "submenus": [
@@ -223,6 +233,14 @@
         {
           "command": "al-pocket-tools.searchAssignments",
           "group": "3_search@1"
+        },
+        {
+          "command": "al-pocket-tools.removeCaptionPrefix",
+          "group": "4_captions@1"
+        },
+        {
+          "command": "al-pocket-tools.removeCaptionSuffix",
+          "group": "4_captions@2"
         }
       ],
       "al-pocket-tools.editorLaunchSubmenu": [
@@ -410,6 +428,29 @@
           "type": "boolean",
           "default": true,
           "description": "When enabled, TransferFields() calls are included in Assignment Tracker results with a 'bulk assign' indicator. Disable to show only direct assignments and Validate calls."
+        },
+        "al-pocket-tools.captionAffix.defaultSuffix": {
+          "type": "string",
+          "default": "",
+          "description": "Default suffix pre-filled when running 'Remove Caption Suffix'. Leave empty to always prompt without a default."
+        },
+        "al-pocket-tools.captionAffix.defaultPrefix": {
+          "type": "string",
+          "default": "",
+          "description": "Default prefix pre-filled when running 'Remove Caption Prefix'. Leave empty to always prompt without a default."
+        },
+        "al-pocket-tools.setLoadFields.readIsolation": {
+          "type": "string",
+          "default": "ReadUncommitted",
+          "enum": ["None", "ReadUncommitted", "ReadCommitted", "RepeatableRead", "UpdLock"],
+          "enumDescriptions": [
+            "Do not insert a ReadIsolation line.",
+            "Insert IsolationLevel::ReadUncommitted — best performance for read-only lookups (no shared locks).",
+            "Insert IsolationLevel::ReadCommitted — avoids dirty reads.",
+            "Insert IsolationLevel::RepeatableRead — prevents non-repeatable reads within a transaction.",
+            "Insert IsolationLevel::UpdLock — acquires an update lock on the rows read, preventing deadlocks on subsequent writes."
+          ],
+          "description": "Controls whether a ReadIsolation assignment is inserted alongside SetLoadFields, and which isolation level to use. Set to None to skip."
         }
       }
     }

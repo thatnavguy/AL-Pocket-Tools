@@ -42,6 +42,7 @@ A collection of tools for AL (Business Central Application Language) development
 | [Assignment Tracker](docs/features/assignment-tracker.md) | Finds every place in a file or the whole workspace where a specific AL field is assigned — via `Validate()`, `:=`, or `TransferFields()`. Results appear in a dedicated sidebar with click-to-navigate. |
 | [Add SetLoadFields](docs/features/set-load-fields.md) | Analyzes which fields are accessed on a Record variable and inserts (or merges into) a `SetLoadFields` call before the first database retrieval. Goes one level deep into called procedures. |
 | [Parameter Alignment](docs/features/parameter-alignment.md) | Toggles procedure declarations between a single-line layout and a vertical layout (one parameter per line, 4-space indent). Triggered via the lightbulb on any line of the declaration. |
+| [Caption Affix Removal](docs/features/caption-affix.md) | Strips a common suffix or prefix from every `Caption` value in the active AL file. Prompts for the affix (pre-filled from settings) and reports how many captions were updated. |
 
 ## Requirements
 

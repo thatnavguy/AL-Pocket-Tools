@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.13.0] - 2026-06-03
+
+### Added
+
+- **Caption Affix Removal** — two new commands (`AL Pocket Tools: Remove Caption Suffix...` and `AL Pocket Tools: Remove Caption Prefix...`) that strip a common suffix or prefix from every `Caption = '...'` value in the active AL file. An input box appears pre-filled from the configurable defaults (`al-pocket-tools.captionAffix.defaultSuffix` / `al-pocket-tools.captionAffix.defaultPrefix`); the user can confirm or change the value before any edits are made. A toast reports how many captions were updated. Both commands are available from the Command Palette and the right-click context menu on AL files under the AL Pocket Tools submenu.
+
 ## [0.12.0] - 2026-06-02
 
 ### Added
