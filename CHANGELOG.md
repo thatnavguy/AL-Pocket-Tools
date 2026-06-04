@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.14.0] - 2026-06-04
+
+### Added
+
+- **Convert Assignment to Validate** — new command (`AL Pocket Tools: Convert Assignment to Validate`) that rewrites selected `:=` field assignment statements as `.Validate()` calls. Supports four forms: `Record.Field := Value`, `Record."Field Name" := Value`, `"Field Name" := Value`, and bare `FieldName := Value` (for use inside table/page triggers). Non-matching lines (blank lines, comments, other code) are silently skipped. Available from the editor right-click context menu on AL files (visible only when text is selected) and from the Command Palette.
+
 ## [0.13.0] - 2026-06-03
 
 ### Added

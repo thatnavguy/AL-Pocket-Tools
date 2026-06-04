@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -173,6 +173,11 @@
         "command": "al-pocket-tools.removeCaptionPrefix",
         "title": "Remove Caption Prefix...",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.convertAssignmentToValidate",
+        "title": "Convert Assignment to Validate",
+        "category": "AL Pocket Tools"
       }
     ],
     "submenus": [
@@ -241,6 +246,11 @@
         {
           "command": "al-pocket-tools.removeCaptionSuffix",
           "group": "4_captions@2"
+        },
+        {
+          "command": "al-pocket-tools.convertAssignmentToValidate",
+          "group": "5_refactor@1",
+          "when": "editorHasSelection"
         }
       ],
       "al-pocket-tools.editorLaunchSubmenu": [

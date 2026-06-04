@@ -9,6 +9,7 @@ import { RainbowIndentController } from './commands/rainbowIndent';
 import { searchAssignments, refreshAssignmentTracker, toggleAssignmentTrackerScope } from './commands/assignmentTracker';
 import { addSetLoadFields } from './commands/setLoadFields';
 import { removeCaptionSuffix, removeCaptionPrefix } from './commands/captionAffix';
+import { convertAssignmentToValidate } from './commands/convertToValidate';
 import { registerParameterAlignmentProvider } from './providers/ParameterAlignmentProvider';
 import { AssignmentTrackerProvider } from './providers/AssignmentTrackerProvider';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
@@ -196,6 +197,10 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             'al-pocket-tools.removeCaptionPrefix',
             () => { void removeCaptionPrefix(); }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.convertAssignmentToValidate',
+            () => { void convertAssignmentToValidate(); }
         ),
         rainbowIndent,
     );
