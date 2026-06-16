@@ -2,6 +2,16 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.15.0] - 2026-06-17
+
+### Added
+
+- **File Sender** — two new commands (`AL Pocket Tools: Copy File To...` and `AL Pocket Tools: Move File To...`) available from the Explorer right-click context menu under the AL Pocket Tools submenu. A quick-pick lists saved destination folders by friendly label; choosing **Browse for folder...** opens a folder picker. Browsed folders can be saved to a named favourites list stored in user settings (`al-pocket-tools.fileSender.savedFolders`). The `al-pocket-tools.fileSender.saveBrowsedFolder` setting controls whether saving happens automatically (`always`, default), on prompt (`ask`), or never (`never`). Duplicate label names are caught at input time. Supports multi-file selection — select several files, right-click, and all are sent to the same destination in one operation. If any destination files already exist a single overwrite confirmation is shown. Move deletes the originals after a successful copy.
+
+### Changed
+
+- **Cleanup Duplicate App Files** — moved from a direct Explorer context menu entry into the AL Pocket Tools submenu (top position), consistent with all other extension commands.
+
 ## [0.14.0] - 2026-06-04
 
 ### Added

@@ -47,6 +47,7 @@ A collection of tools for AL (Business Central Application Language) development
 | [Parameter Alignment](docs/features/parameter-alignment.md) | Toggles procedure declarations between a single-line layout and a vertical layout (one parameter per line, 4-space indent). Triggered via the lightbulb on any line of the declaration. |
 | [Caption Affix Removal](docs/features/caption-affix.md) | Strips a common suffix or prefix from every `Caption` value in the active AL file. Prompts for the affix (pre-filled from settings) and reports how many captions were updated. |
 | [Convert Assignment to Validate](docs/features/convert-to-validate.md) | Converts selected `:=` field assignments to `.Validate()` calls. Supports record-prefixed and bare assignments, with and without quoted field names. |
+| [File Sender](docs/features/file-sender.md) | Copy or move any file to a saved destination folder from the Explorer context menu. Maintain a named favourites list stored in user settings. |
 
 ## Requirements
 

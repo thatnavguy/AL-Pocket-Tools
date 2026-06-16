@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -43,7 +43,9 @@
     "onCommand:al-pocket-tools.changeProcedureVisibility",
     "onCommand:al-pocket-tools.changeProcedureVisibilityProject",
     "onCommand:al-pocket-tools.toggleRainbowIndent",
-    "onView:al-pocket-tools.assignmentTracker"
+    "onView:al-pocket-tools.assignmentTracker",
+    "onCommand:al-pocket-tools.copyFileTo",
+    "onCommand:al-pocket-tools.moveFileTo"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -178,6 +180,16 @@
         "command": "al-pocket-tools.convertAssignmentToValidate",
         "title": "Convert Assignment to Validate",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.copyFileTo",
+        "title": "Copy File To...",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.moveFileTo",
+        "title": "Move File To...",
+        "category": "AL Pocket Tools"
       }
     ],
     "submenus": [
@@ -187,6 +199,10 @@
       },
       {
         "id": "al-pocket-tools.editorLaunchSubmenu",
+        "label": "AL Pocket Tools"
+      },
+      {
+        "id": "al-pocket-tools.explorerFileSubmenu",
         "label": "AL Pocket Tools"
       }
     ],
@@ -200,14 +216,14 @@
     "menus": {
       "explorer/context": [
         {
-          "command": "al-pocket-tools.cleanupAppFiles",
-          "when": "resourceExtname == .app",
-          "group": "al-pocket-tools@1"
-        },
-        {
           "command": "al-pocket-tools.bumpVersion",
           "when": "resourceFilename == app.json",
           "group": "al-pocket-tools@1"
+        },
+        {
+          "submenu": "al-pocket-tools.explorerFileSubmenu",
+          "when": "!explorerResourceIsFolder",
+          "group": "al-pocket-tools@2"
         }
       ],
       "editor/context": [
@@ -265,6 +281,21 @@
         {
           "command": "al-pocket-tools.clearLaunchConfigs",
           "group": "1_launch@3"
+        }
+      ],
+      "al-pocket-tools.explorerFileSubmenu": [
+        {
+          "command": "al-pocket-tools.cleanupAppFiles",
+          "when": "resourceExtname == .app",
+          "group": "1_cleanup@1"
+        },
+        {
+          "command": "al-pocket-tools.copyFileTo",
+          "group": "2_fileSender@1"
+        },
+        {
+          "command": "al-pocket-tools.moveFileTo",
+          "group": "2_fileSender@2"
         }
       ],
       "view/title": [
@@ -448,6 +479,30 @@
           "type": "string",
           "default": "",
           "description": "Default prefix pre-filled when running 'Remove Caption Prefix'. Leave empty to always prompt without a default."
+        },
+        "al-pocket-tools.fileSender.savedFolders": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "object",
+            "required": ["label", "path"],
+            "properties": {
+              "label": { "type": "string", "description": "Friendly display name shown in the folder picker." },
+              "path": { "type": "string", "description": "Absolute path to the folder." }
+            }
+          },
+          "description": "Saved destination folders shown in the Copy/Move File To picker."
+        },
+        "al-pocket-tools.fileSender.saveBrowsedFolder": {
+          "type": "string",
+          "default": "always",
+          "enum": ["always", "ask", "never"],
+          "enumDescriptions": [
+            "Automatically prompt to name and save any browsed folder to the favourites list.",
+            "Ask whether to save the browsed folder each time.",
+            "Never save browsed folders — use the picker without persisting anything."
+          ],
+          "description": "Controls whether a folder chosen via 'Browse for folder...' is saved to the favourites list."
         },
         "al-pocket-tools.setLoadFields.readIsolation": {
           "type": "string",
