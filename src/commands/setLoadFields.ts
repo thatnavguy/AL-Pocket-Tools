@@ -544,7 +544,7 @@ export async function addSetLoadFields(): Promise<void> {
     }
 
     // Try to detect the record variable under/near the cursor
-    let selectedRecord = detectRecordAtCursor(cursorLineText, allRecords);
+    let selectedRecord = detectRecordAtCursor(cursorLineText, allRecords, currentProc.bodyText);
 
     if (!selectedRecord) {
         // Fall back to quick pick
@@ -672,9 +672,30 @@ export async function addSetLoadFields(): Promise<void> {
 // Cursor detection
 // ---------------------------------------------------------------------------
 
-function detectRecordAtCursor(lineText: string, records: RecordVariable[]): RecordVariable | undefined {
+function detectRecordAtCursor(lineText: string, records: RecordVariable[], bodyText?: string): RecordVariable | undefined {
+    // Priority 1: record that has a retrieval call on this exact line
     for (const rec of records) {
-        // Check if the variable name appears on the current line
+        const retrievalRegex = new RegExp(
+            `\\b${escapeRegExp(rec.name)}\\s*\\.\\s*(Get|Find|FindFirst|FindLast|FindSet)\\s*\\(`, 'i'
+        );
+        if (retrievalRegex.test(lineText)) {
+            return rec;
+        }
+    }
+
+    // Priority 2: record that appears on this line AND has a retrieval call anywhere in the procedure body
+    if (bodyText) {
+        for (const rec of records) {
+            if (!new RegExp(`\\b${escapeRegExp(rec.name)}\\b`, 'i').test(lineText)) { continue; }
+            const hasRetrieval = new RegExp(
+                `\\b${escapeRegExp(rec.name)}\\s*\\.\\s*(Get|Find|FindFirst|FindLast|FindSet)\\s*\\(`, 'i'
+            ).test(bodyText);
+            if (hasRetrieval) { return rec; }
+        }
+    }
+
+    // Fallback: first record name found on the line
+    for (const rec of records) {
         const regex = new RegExp(`\\b${escapeRegExp(rec.name)}\\b`, 'i');
         if (regex.test(lineText)) {
             return rec;

@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.15.1] - 2026-06-23
+
+### Fixed
+
+- **Add SetLoadFields: wrong record variable selected on Get line** — when the cursor was on a line such as `if not Location.Get(WarehouseActivityLine."Location Code") then`, the command incorrectly picked `WarehouseActivityLine` (a parameter that appeared earlier in the variable list) instead of `Location`. Detection now prioritises the record variable that has a retrieval call (`Get`/`Find*`) on the cursor line, then falls back to any record with a retrieval call elsewhere in the procedure body, before using plain name-presence as a last resort.
+
 ## [0.15.0] - 2026-06-17
 
 ### Added
