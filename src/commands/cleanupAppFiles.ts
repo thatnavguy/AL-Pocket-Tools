@@ -5,6 +5,7 @@ interface ParsedApp {
     uri: vscode.Uri;
     identity: string;
     version: [number, number, number, number];
+    isDep: boolean;
 }
 
 interface DuplicateGroup {
@@ -20,10 +21,13 @@ interface FolderResult {
     totalFiles: number;
 }
 
-// Filename convention: Publisher_AppName_Major.Minor.Build.Revision.app
+// Filename convention: Publisher_AppName_Major.Minor.Build.Revision[.dep].app
 // Last underscore-delimited segment is version; everything before is identity.
 function parseAppFile(uri: vscode.Uri): ParsedApp | null {
-    const base = path.basename(uri.fsPath, '.app');
+    const filename = path.basename(uri.fsPath);
+    const isDep = filename.endsWith('.dep.app');
+    const base = isDep ? filename.slice(0, -'.dep.app'.length) : filename.slice(0, -'.app'.length);
+
     const segments = base.split('_');
     if (segments.length < 3) { return null; }
 
@@ -33,7 +37,7 @@ function parseAppFile(uri: vscode.Uri): ParsedApp | null {
 
     if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) { return null; }
 
-    return { uri, identity, version: parts as [number, number, number, number] };
+    return { uri, identity, version: parts as [number, number, number, number], isDep };
 }
 
 function compareVersionDesc(a: ParsedApp, b: ParsedApp): number {
@@ -95,9 +99,10 @@ async function findDuplicates(fileUri?: vscode.Uri): Promise<{
 
         const byIdentity = new Map<string, ParsedApp[]>();
         for (const p of parsed) {
-            const list = byIdentity.get(p.identity);
+            const key = `${p.identity}|${p.isDep ? 'dep' : 'app'}`;
+            const list = byIdentity.get(key);
             if (list) { list.push(p); }
-            else { byIdentity.set(p.identity, [p]); }
+            else { byIdentity.set(key, [p]); }
         }
 
         const groups: DuplicateGroup[] = [];

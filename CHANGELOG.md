@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.15.2] - 2026-06-24
+
+### Fixed
+
+- **Cleanup Duplicate App Files: `.dep.app` files now cleaned up** — companion `.dep.app` files (e.g. `Publisher_App_1.0.16.4.dep.app`) are now detected and treated as a separate parallel group alongside their `.app` counterparts. When old versions are deleted, both the `.app` and `.dep.app` for that version are removed, leaving only the highest-version pair.
+
 ## [0.15.1] - 2026-06-23
 
 ### Fixed
