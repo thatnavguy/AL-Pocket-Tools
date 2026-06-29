@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.16.0] - 2026-06-25
+
+### Added
+
+- **Push PTE Apps to Business Central** — new command (`AL Pocket Tools: Push to Business Central...`) that uploads one or more `.app` files directly to a BC SaaS environment without bccontainerhelper. Authentication uses VS Code's built-in Microsoft sign-in. Target environment is selected from saved launch configurations (`al-pocket-tools.launch.configurations`) — configurations with a `tenant` and `environmentName` are offered as cloud targets; if only one exists it is used automatically. Before uploading, each `.app` file is read as a ZIP to extract `NavxManifest.xml`, and files are topologically sorted by dependency so that prerequisites are always deployed first (falls back to selected order if the manifest cannot be read). Uploads are sequential with async operation polling (up to 2 minutes per file). The command is available from the Command Palette and from the Explorer right-click context menu on `.app` files (supports multi-select). The `al-pocket-tools.deploy.api` setting controls the authentication scope: `automation` (default, `user_impersonation`) or `adminCenter` (`/.default` for tenant admins).
+
 ## [0.15.2] - 2026-06-24
 
 ### Fixed

@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.15.2",
+  "version": "0.16.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -45,7 +45,8 @@
     "onCommand:al-pocket-tools.toggleRainbowIndent",
     "onView:al-pocket-tools.assignmentTracker",
     "onCommand:al-pocket-tools.copyFileTo",
-    "onCommand:al-pocket-tools.moveFileTo"
+    "onCommand:al-pocket-tools.moveFileTo",
+    "onCommand:al-pocket-tools.pushPTEApps"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -190,6 +191,11 @@
         "command": "al-pocket-tools.moveFileTo",
         "title": "Move File To...",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.pushPTEApps",
+        "title": "Push to Business Central...",
+        "category": "AL Pocket Tools"
       }
     ],
     "submenus": [
@@ -296,6 +302,11 @@
         {
           "command": "al-pocket-tools.moveFileTo",
           "group": "2_fileSender@2"
+        },
+        {
+          "command": "al-pocket-tools.pushPTEApps",
+          "when": "resourceExtname == .app",
+          "group": "3_deploy@1"
         }
       ],
       "view/title": [
@@ -398,7 +409,10 @@
         "al-pocket-tools.regionViewer.refreshMode": {
           "type": "string",
           "default": "manual",
-          "enum": ["manual", "onOpenFile"],
+          "enum": [
+            "manual",
+            "onOpenFile"
+          ],
           "enumDescriptions": [
             "Refresh only when you click the Refresh button in the Region Viewer title bar.",
             "Automatically refresh when you switch to a different file in the editor. Only runs when the Region Viewer is visible."
@@ -410,11 +424,21 @@
           "default": [],
           "items": {
             "type": "object",
-            "required": ["name", "type", "request"],
+            "required": [
+              "name",
+              "type",
+              "request"
+            ],
             "properties": {
-              "name": { "type": "string" },
-              "type": { "type": "string" },
-              "request": { "type": "string" }
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "request": {
+                "type": "string"
+              }
             },
             "additionalProperties": true
           },
@@ -423,7 +447,10 @@
         "al-pocket-tools.procedureVisibility.reportStyle": {
           "type": "string",
           "default": "list",
-          "enum": ["list", "dialog"],
+          "enum": [
+            "list",
+            "dialog"
+          ],
           "enumDescriptions": [
             "Show a searchable list of all procedures with their visibility and line number. Select a procedure to navigate to it.",
             "Show a simple counts-only dialog: how many procedures are Local, Internal, and Public."
@@ -433,7 +460,10 @@
         "al-pocket-tools.procedureVisibility.confirmationStyle": {
           "type": "string",
           "default": "once",
-          "enum": ["once", "perProcedure"],
+          "enum": [
+            "once",
+            "perProcedure"
+          ],
           "enumDescriptions": [
             "Show a single confirmation dialog before changing all procedures at once.",
             "Confirm each procedure change individually, with Yes / Yes to All / Skip / Cancel options."
@@ -443,7 +473,10 @@
         "al-pocket-tools.reportViewer.refreshMode": {
           "type": "string",
           "default": "manual",
-          "enum": ["manual", "onOpenFile"],
+          "enum": [
+            "manual",
+            "onOpenFile"
+          ],
           "enumDescriptions": [
             "Refresh only when you click the Refresh button in the Report Viewer title bar.",
             "Automatically refresh when you switch to a different file in the editor. Only runs when the Report Viewer is visible."
@@ -458,7 +491,10 @@
         "al-pocket-tools.rainbowIndent.onEditorSwitch": {
           "type": "string",
           "default": "autoHide",
-          "enum": ["autoHide", "follow"],
+          "enum": [
+            "autoHide",
+            "follow"
+          ],
           "enumDescriptions": [
             "Rainbow indent is dismissed when you switch to a different editor tab.",
             "Rainbow indent follows you to the new editor tab and re-applies there."
@@ -485,10 +521,19 @@
           "default": [],
           "items": {
             "type": "object",
-            "required": ["label", "path"],
+            "required": [
+              "label",
+              "path"
+            ],
             "properties": {
-              "label": { "type": "string", "description": "Friendly display name shown in the folder picker." },
-              "path": { "type": "string", "description": "Absolute path to the folder." }
+              "label": {
+                "type": "string",
+                "description": "Friendly display name shown in the folder picker."
+              },
+              "path": {
+                "type": "string",
+                "description": "Absolute path to the folder."
+              }
             }
           },
           "description": "Saved destination folders shown in the Copy/Move File To picker."
@@ -496,7 +541,11 @@
         "al-pocket-tools.fileSender.saveBrowsedFolder": {
           "type": "string",
           "default": "always",
-          "enum": ["always", "ask", "never"],
+          "enum": [
+            "always",
+            "ask",
+            "never"
+          ],
           "enumDescriptions": [
             "Automatically prompt to name and save any browsed folder to the favourites list.",
             "Ask whether to save the browsed folder each time.",
@@ -504,10 +553,27 @@
           ],
           "description": "Controls whether a folder chosen via 'Browse for folder...' is saved to the favourites list."
         },
+        "al-pocket-tools.deploy.clientId": {
+          "type": "string",
+          "default": "1950a258-227b-4e31-a9cf-717495945fc2",
+          "description": "Azure AD client ID for the Business Central device code sign-in. The default matches the client ID navcontainerhelper uses (Azure PowerShell). Override only if your tenant requires a different registered app."
+        },
+        "al-pocket-tools.deploy.delayMinutes": {
+          "type": "array",
+          "items": { "type": "number", "minimum": 0 },
+          "default": [0],
+          "description": "Delay options (in minutes) offered before each deployment. [0] means deploy immediately with no prompt. Add values such as [0, 5, 15, 30] to show a quick-pick at deploy time."
+        },
         "al-pocket-tools.setLoadFields.readIsolation": {
           "type": "string",
           "default": "ReadUncommitted",
-          "enum": ["None", "ReadUncommitted", "ReadCommitted", "RepeatableRead", "UpdLock"],
+          "enum": [
+            "None",
+            "ReadUncommitted",
+            "ReadCommitted",
+            "RepeatableRead",
+            "UpdLock"
+          ],
           "enumDescriptions": [
             "Do not insert a ReadIsolation line.",
             "Insert IsolationLevel::ReadUncommitted — best performance for read-only lookups (no shared locks).",
@@ -529,13 +595,17 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.118.0",
+    "@types/adm-zip": "^0.5.8",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "typescript-eslint": "^8.56.1",
+    "@types/vscode": "^1.118.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
     "eslint": "^9.39.3",
     "typescript": "^5.9.3",
-    "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2"
+    "typescript-eslint": "^8.56.1"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.17"
   }
 }
