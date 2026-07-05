@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import AdmZip from 'adm-zip';
+import * as zlib from 'zlib';
 
 type LaunchConfig = Record<string, unknown>;
 
@@ -142,27 +142,65 @@ async function getAccessToken(secrets: vscode.SecretStorage, tenantId: string): 
 
 // ---------- Dependency sort ----------
 
-function readManifest(fileBytes: Uint8Array): AppManifest | null {
-    try {
-        const zip = new AdmZip(Buffer.from(fileBytes));
-        const entry = zip.getEntry('NavxManifest.xml');
-        if (!entry) { return null; }
-        const xml = entry.getData().toString('utf8');
+// BC .app file layout (navcontainerhelper source confirmed):
+//   Offset 0  : UInt32  magic1       0x5856414E ('NAVX' little-endian)
+//   Offset 4  : UInt32  metadataSize (40)
+//   Offset 8  : UInt32  version
+//   Offset 12 : GUID    packageId    (16 bytes)
+//   Offset 28 : Int64   contentLength
+//   Offset 36 : UInt32  magic2       0x5856414E
+//   Offset 40 : bytes   ZIP content  (standard ZIP archive)
+const NAVX_MAGIC = 0x5856414e;
+const NAVX_HEADER_SIZE = 40;
 
-        const idMatch = /<App[^>]+Id="([^"]+)"/i.exec(xml);
-        if (!idMatch) { return null; }
+function extractFileFromApp(fileBytes: Uint8Array, targetName: string): Buffer {
+    const buf = Buffer.from(fileBytes);
+    const target = targetName.toLowerCase();
+    const pkSig = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
 
-        const depIds: string[] = [];
-        const depRegex = /<Dependency[^>]+Id="([^"]+)"/gi;
-        let m: RegExpExecArray | null;
-        while ((m = depRegex.exec(xml)) !== null) {
-            depIds.push(m[1].toLowerCase());
+    // Skip the NAVX header so we never mistake its bytes for a ZIP local-file signature.
+    const startPos = (buf.length >= NAVX_HEADER_SIZE && buf.readUInt32LE(0) === NAVX_MAGIC)
+        ? NAVX_HEADER_SIZE : 0;
+
+    let pos = startPos;
+    while (pos < buf.length - 30) {
+        const sig = buf.indexOf(pkSig, pos);
+        if (sig === -1) { break; }
+        const fnLen = buf.readUInt16LE(sig + 26);
+        const extraLen = buf.readUInt16LE(sig + 28);
+        const fnStart = sig + 30;
+        const entryName = buf.subarray(fnStart, fnStart + fnLen).toString('utf8');
+        const dataStart = fnStart + fnLen + extraLen;
+        const compressedSize = buf.readUInt32LE(sig + 18);
+        if (entryName.toLowerCase() === target) {
+            const compression = buf.readUInt16LE(sig + 8);
+            const compressed = buf.subarray(dataStart, dataStart + compressedSize);
+            if (compression === 0) { return compressed; }
+            if (compression === 8) { return zlib.inflateRawSync(compressed); }
+            throw new Error(`Unsupported compression method ${compression} for ${targetName}`);
         }
-
-        return { id: idMatch[1].toLowerCase(), dependencies: depIds };
-    } catch {
-        return null;
+        const next = dataStart + compressedSize;
+        pos = next > sig ? next : sig + 4;
     }
+    throw new Error(`${targetName} not found in .app archive`);
+}
+
+function readManifest(fileBytes: Uint8Array): AppManifest {
+    const xml = extractFileFromApp(fileBytes, 'NavxManifest.xml').toString('utf8');
+
+    const appTag = /<App[\s\S]*?>/i.exec(xml);
+    if (!appTag) { throw new Error(`<App> element not found in NavxManifest.xml`); }
+    const idMatch = /\bId="([^"]+)"/i.exec(appTag[0]);
+    if (!idMatch) { throw new Error(`Id attribute not found in: ${appTag[0]}`); }
+
+    const depIds: string[] = [];
+    const depRegex = /<Dependency[^>]+Id="([^"]+)"/gi;
+    let m: RegExpExecArray | null;
+    while ((m = depRegex.exec(xml)) !== null) {
+        depIds.push(m[1].toLowerCase());
+    }
+
+    return { id: idMatch[1].toLowerCase(), dependencies: depIds };
 }
 
 function sortByDependencies(uris: readonly vscode.Uri[], manifests: Map<string, AppManifest>): vscode.Uri[] {
@@ -292,6 +330,15 @@ async function getFirstCompany(token: string, tenantId: string, environmentName:
     return data.value[0];
 }
 
+interface DeploymentStatus {
+    appId: string;
+    name: string;
+    publisher: string;
+    version: string;
+    status: string;
+    message?: string;
+}
+
 interface ExtensionUploadRecord {
     systemId: string;
     'extensionContent@odata.mediaEditLink'?: string;
@@ -304,7 +351,7 @@ async function uploadApp(
     companyId: string,
     fileBytes: Uint8Array,
     _fileName: string,
-): Promise<string | null> {
+): Promise<void> {
     // navcontainerhelper three-step process:
     //   1. GET/POST/PATCH extensionUpload to create or retrieve the upload slot (JSON)
     //   2. PATCH extensionContent media link with raw binary
@@ -365,25 +412,35 @@ async function uploadApp(
         headers: { ...authHeader, 'Accept': 'application/json' },
     });
 
-    if (triggerRes.status === 204 || triggerRes.status === 200) { return null; }
-    if (triggerRes.status === 202) { return triggerRes.headers.get('Location'); }
+    if (triggerRes.status === 204 || triggerRes.status === 200 || triggerRes.status === 202) { return; }
 
     throw new Error(`${triggerRes.status} ${triggerRes.statusText}: ${await triggerRes.text()}`);
 }
 
-async function pollOperationStatus(token: string, statusUrl: string): Promise<void> {
+async function pollDeploymentStatus(
+    token: string,
+    tenantId: string,
+    environmentName: string,
+    companyId: string,
+    appId: string,
+): Promise<DeploymentStatus> {
+    const url =
+        `${BC_BASE}/v2.0/${tenantId}/${environmentName}/api/microsoft/automation/v2.0` +
+        `/companies(${companyId})/extensionDeploymentStatus?$filter=appId eq '${appId}'`;
     const deadline = Date.now() + 120_000;
+
     while (Date.now() < deadline) {
-        await new Promise<void>(resolve => setTimeout(resolve, 3000));
-        const response = await fetch(statusUrl, { headers: { 'Authorization': `Bearer ${token}` } });
-        if (!response.ok) { break; }
-        const data = await response.json() as { status?: string; message?: string };
-        const status = (data.status ?? '').toLowerCase();
-        if (status === 'succeeded' || status === 'completed') { return; }
-        if (status === 'failed' || status === 'error') {
-            throw new Error(data.message ?? 'Deployment failed on the server.');
+        await new Promise<void>(r => setTimeout(r, 3000));
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' } });
+        if (!res.ok) {
+            throw new Error(`Status check failed (${res.status}): ${await res.text()}`);
         }
+        const data = await res.json() as { value: DeploymentStatus[] };
+        const entry = data.value.find(e => e.appId.toLowerCase() === appId.toLowerCase());
+        if (!entry) { continue; }
+        if (entry.status.toLowerCase() !== 'installing') { return entry; }
     }
+    throw new Error('Deployment status check timed out after 2 minutes.');
 }
 
 // ---------- Command ----------
@@ -485,16 +542,18 @@ export async function pushPTEApps(
             title: `Deploying to ${target.label}`,
             cancellable: false,
         }, async progress => {
-            progress.report({ message: 'Retrieving company...' });
+            progress.report({ message: 'Connecting...' });
             const company = await getFirstCompany(token, target.tenantId, target.environmentName);
-            output.appendLine(`  Company: ${company.name}`);
 
             progress.report({ message: 'Sorting by dependencies...' });
             const manifests = new Map<string, AppManifest>();
             for (const uri of appUris) {
                 const bytes = await vscode.workspace.fs.readFile(uri);
-                const manifest = readManifest(bytes);
-                if (manifest) { manifests.set(uri.fsPath, manifest); }
+                try {
+                    manifests.set(uri.fsPath, readManifest(bytes));
+                } catch (e) {
+                    output.appendLine(`  Warning: ${path.basename(uri.fsPath)}: ${e instanceof Error ? e.message : String(e)}`);
+                }
             }
             const sortedUris = manifests.size > 0
                 ? sortByDependencies(appUris, manifests)
@@ -510,15 +569,25 @@ export async function pushPTEApps(
 
                 try {
                     const fileBytes = await vscode.workspace.fs.readFile(uri);
-                    const operationUrl = await uploadApp(
-                        token, target.tenantId, target.environmentName, company.id, fileBytes, fileName
-                    );
-                    if (operationUrl) {
+                    await uploadApp(token, target.tenantId, target.environmentName, company.id, fileBytes, fileName);
+
+                    const manifest = manifests.get(uri.fsPath);
+                    if (manifest) {
                         progress.report({ message: `Waiting for ${fileName}...` });
                         output.append('deploying... ');
-                        await pollOperationStatus(token, operationUrl);
+                        const status = await pollDeploymentStatus(
+                            token, target.tenantId, target.environmentName, company.id, manifest.id
+                        );
+                        const statusLow = status.status.toLowerCase();
+                        if (statusLow === 'installed') {
+                            output.appendLine(`OK  (${status.publisher} ${status.name} v${status.version})`);
+                        } else {
+                            const detail = status.message ? ` — ${status.message}` : '';
+                            throw new Error(`${status.status}${detail}`);
+                        }
+                    } else {
+                        output.appendLine('OK  (status unknown — manifest unreadable)');
                     }
-                    output.appendLine('OK');
                 } catch (err) {
                     const msg = err instanceof Error ? err.message : String(err);
                     output.appendLine(`FAILED — ${msg}`);
