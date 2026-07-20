@@ -11,6 +11,7 @@ import { addSetLoadFields } from './commands/setLoadFields';
 import { removeCaptionSuffix, removeCaptionPrefix } from './commands/captionAffix';
 import { convertAssignmentToValidate } from './commands/convertToValidate';
 import { copyFileTo, moveFileTo } from './commands/fileSender';
+import { renumberObjectIds } from './commands/renumberObjectIds';
 import { registerParameterAlignmentProvider } from './providers/ParameterAlignmentProvider';
 import { AssignmentTrackerProvider } from './providers/AssignmentTrackerProvider';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
@@ -210,6 +211,10 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             'al-pocket-tools.moveFileTo',
             (uri?: vscode.Uri, allUris?: vscode.Uri[]) => { moveFileTo(uri, allUris); }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.renumberObjectIds',
+            () => { void renumberObjectIds(output); }
         ),
         rainbowIndent,
     );

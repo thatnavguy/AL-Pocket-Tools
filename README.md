@@ -48,6 +48,7 @@ A collection of tools for AL (Business Central Application Language) development
 | [Caption Affix Removal](docs/features/caption-affix.md) | Strips a common suffix or prefix from every `Caption` value in the active AL file. Prompts for the affix (pre-filled from settings) and reports how many captions were updated. |
 | [Convert Assignment to Validate](docs/features/convert-to-validate.md) | Converts selected `:=` field assignments to `.Validate()` calls. Supports record-prefixed and bare assignments, with and without quoted field names. |
 | [File Sender](docs/features/file-sender.md) | Copy or move any file to a saved destination folder from the Explorer context menu. Maintain a named favourites list stored in user settings. |
+| [Renumber Object IDs](docs/features/renumber-object-ids.md) | Finds AL objects sharing the same ID, uses git history to determine which is newest, and reassigns it a free ID from `app.json`'s `idRanges`. |
 
 ## Requirements
 

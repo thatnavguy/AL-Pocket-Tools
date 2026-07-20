@@ -45,7 +45,8 @@
     "onCommand:al-pocket-tools.toggleRainbowIndent",
     "onView:al-pocket-tools.assignmentTracker",
     "onCommand:al-pocket-tools.copyFileTo",
-    "onCommand:al-pocket-tools.moveFileTo"
+    "onCommand:al-pocket-tools.moveFileTo",
+    "onCommand:al-pocket-tools.renumberObjectIds"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -189,6 +190,11 @@
       {
         "command": "al-pocket-tools.moveFileTo",
         "title": "Move File To...",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.renumberObjectIds",
+        "title": "Renumber Object IDs",
         "category": "AL Pocket Tools"
       }
     ],
