@@ -28,6 +28,10 @@ A collection of tools for AL (Business Central Application Language) development
 - Convert To Validate
 ![ConvertToValidate](./image/ConvertToValidate.gif)
 
+- Convert Hardcoded Text to Label
+
+![Hardcoded Text to Label](./image/HardcodedTexttoLabel.gif)
+
 ## Features
 
 | Feature | Description |
@@ -48,6 +52,7 @@ A collection of tools for AL (Business Central Application Language) development
 | [Caption Affix Removal](docs/features/caption-affix.md) | Strips a common suffix or prefix from every `Caption` value in the active AL file. Prompts for the affix (pre-filled from settings) and reports how many captions were updated. |
 | [Convert Assignment to Validate](docs/features/convert-to-validate.md) | Converts selected `:=` field assignments to `.Validate()` calls. Supports record-prefixed and bare assignments, with and without quoted field names. |
 | [File Sender](docs/features/file-sender.md) | Copy or move any file to a saved destination folder from the Explorer context menu. Maintain a named favourites list stored in user settings. |
+| [Convert Hardcoded Text to Label](docs/features/text-to-label.md) | Converts selected `Error(...)`, `Message(...)`, `Confirm(...)`, or `StrSubstNo(...)` calls into `Label` variables in their enclosing procedures, auto-generating label names/`Comment` properties. Supports multi-line selections spanning several procedures. |
 
 ## Requirements
 

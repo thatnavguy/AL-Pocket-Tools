@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.15.2",
+  "version": "0.16.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -45,7 +45,8 @@
     "onCommand:al-pocket-tools.toggleRainbowIndent",
     "onView:al-pocket-tools.assignmentTracker",
     "onCommand:al-pocket-tools.copyFileTo",
-    "onCommand:al-pocket-tools.moveFileTo"
+    "onCommand:al-pocket-tools.moveFileTo",
+    "onCommand:al-pocket-tools.convertTextToLabel"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -190,6 +191,11 @@
         "command": "al-pocket-tools.moveFileTo",
         "title": "Move File To...",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.convertTextToLabel",
+        "title": "Convert Hardcoded Text to Label",
+        "category": "AL Pocket Tools"
       }
     ],
     "submenus": [
@@ -266,6 +272,11 @@
         {
           "command": "al-pocket-tools.convertAssignmentToValidate",
           "group": "5_refactor@1",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "al-pocket-tools.convertTextToLabel",
+          "group": "5_refactor@2",
           "when": "editorHasSelection"
         }
       ],

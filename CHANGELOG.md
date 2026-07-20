@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.16.0] - 2026-07-20
+
+### Added
+
+- **Convert Hardcoded Text to Label** — new command (`AL Pocket Tools: Convert Hardcoded Text to Label`) that converts a hardcoded `Error(...)`, `Message(...)`, `Confirm(...)`, or `StrSubstNo(...)` call into a `Label` variable declared in the enclosing procedure's `var` section. Auto-generates the label name from the message text (stripping placeholders and stopwords) with a function-specific suffix (`Err`/`Msg`/`Qst`/`Lbl`), and auto-generates a `Comment` property mapping `%1`, `%2`, ... placeholders to their argument expressions. Reuses an existing identical label instead of duplicating it, and appends a numeric suffix on name collisions. Supports multi-line selections spanning multiple procedures — every complete call found on a selected line is converted in one run, silently skipping non-matching lines, with a summary notification. Available from the Command Palette and the editor right-click context menu (visible only when text is selected).
+
 ## [0.15.2] - 2026-06-24
 
 ### Fixed
