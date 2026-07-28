@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -21,6 +21,7 @@
     "alpackages",
     "region viewer",
     "pragma viewer",
+    "api viewer",
     "version bump"
   ],
   "engines": {
@@ -44,6 +45,7 @@
     "onCommand:al-pocket-tools.changeProcedureVisibilityProject",
     "onCommand:al-pocket-tools.toggleRainbowIndent",
     "onView:al-pocket-tools.assignmentTracker",
+    "onView:al-pocket-tools.apiViewer",
     "onCommand:al-pocket-tools.copyFileTo",
     "onCommand:al-pocket-tools.moveFileTo",
     "onCommand:al-pocket-tools.convertTextToLabel"
@@ -137,6 +139,24 @@
         "command": "al-pocket-tools.refreshReportViewer",
         "title": "Refresh",
         "icon": "$(refresh)",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.refreshApiViewer",
+        "title": "Refresh",
+        "icon": "$(refresh)",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.copyApiRelativePath",
+        "title": "Copy Relative Path",
+        "icon": "$(copy)",
+        "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.copyApiFullUrl",
+        "title": "Copy Full URL",
+        "icon": "$(link)",
         "category": "AL Pocket Tools"
       },
       {
@@ -326,6 +346,11 @@
           "group": "navigation"
         },
         {
+          "command": "al-pocket-tools.refreshApiViewer",
+          "when": "view == al-pocket-tools.apiViewer",
+          "group": "navigation"
+        },
+        {
           "command": "al-pocket-tools.refreshAssignmentTracker",
           "when": "view == al-pocket-tools.assignmentTracker",
           "group": "navigation"
@@ -339,6 +364,28 @@
           "command": "al-pocket-tools.searchAssignments",
           "when": "view == al-pocket-tools.assignmentTracker",
           "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "al-pocket-tools.copyApiRelativePath",
+          "when": "view == al-pocket-tools.apiViewer && viewItem == apiEntity",
+          "group": "inline@1"
+        },
+        {
+          "command": "al-pocket-tools.copyApiFullUrl",
+          "when": "view == al-pocket-tools.apiViewer && viewItem == apiEntity",
+          "group": "inline@2"
+        },
+        {
+          "command": "al-pocket-tools.copyApiRelativePath",
+          "when": "view == al-pocket-tools.apiViewer && viewItem == apiEntity",
+          "group": "1_copy@1"
+        },
+        {
+          "command": "al-pocket-tools.copyApiFullUrl",
+          "when": "view == al-pocket-tools.apiViewer && viewItem == apiEntity",
+          "group": "1_copy@2"
         }
       ]
     },
@@ -360,6 +407,10 @@
         {
           "id": "al-pocket-tools.pragmaViewer",
           "name": "Pragma Viewer"
+        },
+        {
+          "id": "al-pocket-tools.apiViewer",
+          "name": "API Viewer"
         }
       ],
       "explorer": [
@@ -387,6 +438,10 @@
       {
         "view": "al-pocket-tools.pragmaViewer",
         "contents": "No pragma directives found in the workspace.\n\n[Refresh](command:al-pocket-tools.refreshPragmaViewer)"
+      },
+      {
+        "view": "al-pocket-tools.apiViewer",
+        "contents": "No API pages or queries found in the workspace.\n\n[Refresh](command:al-pocket-tools.refreshApiViewer)"
       },
       {
         "view": "al-pocket-tools.reportViewer",

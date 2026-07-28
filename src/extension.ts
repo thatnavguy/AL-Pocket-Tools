@@ -17,12 +17,14 @@ import { AssignmentTrackerProvider } from './providers/AssignmentTrackerProvider
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
 import { PragmaTreeProvider } from './providers/PragmaTreeProvider';
 import { ReportTreeProvider } from './providers/ReportTreeProvider';
+import { ApiTreeProvider, ApiEntityItem } from './providers/ApiTreeProvider';
 
 export function activate(context: vscode.ExtensionContext) {
     const output = vscode.window.createOutputChannel('AL Pocket Tools');
     const regionProvider = new RegionTreeProvider();
     const pragmaProvider = new PragmaTreeProvider();
     const reportProvider = new ReportTreeProvider();
+    const apiProvider = new ApiTreeProvider();
 
     const assignmentProvider = new AssignmentTrackerProvider();
     const versionStatusBar = new VersionStatusBar(context);
@@ -40,6 +42,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     const reportView = vscode.window.createTreeView('al-pocket-tools.reportViewer', {
         treeDataProvider: reportProvider,
+        showCollapseAll: true,
+    });
+
+    const apiView = vscode.window.createTreeView('al-pocket-tools.apiViewer', {
+        treeDataProvider: apiProvider,
         showCollapseAll: true,
     });
 
@@ -100,6 +107,7 @@ export function activate(context: vscode.ExtensionContext) {
         regionView,
         pragmaView,
         reportView,
+        apiView,
         assignmentTrackerView,
         { dispose: () => reportAutoRefreshDisposable?.dispose() },
         { dispose: () => autoRefreshDisposable?.dispose() },
@@ -153,6 +161,26 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             'al-pocket-tools.refreshReportViewer',
             () => { reportProvider.refresh(vscode.window.activeTextEditor?.document); }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.refreshApiViewer',
+            () => { void apiProvider.scan(); }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.copyApiRelativePath',
+            async (item?: ApiEntityItem) => {
+                if (!item) { return; }
+                await vscode.env.clipboard.writeText(item.relativePath);
+                void vscode.window.showInformationMessage(`Copied API path: ${item.relativePath}`);
+            }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.copyApiFullUrl',
+            async (item?: ApiEntityItem) => {
+                if (!item) { return; }
+                await vscode.env.clipboard.writeText(item.fullUrl);
+                void vscode.window.showInformationMessage(`Copied API URL: ${item.fullUrl}`);
+            }
         ),
         vscode.commands.registerCommand('al-pocket-tools.bumpVersion', async () => { await bumpVersion(); versionStatusBar.refresh(); }),
         vscode.commands.registerCommand('al-pocket-tools.incrementMajor', async () => { await incrementVersionPart('major'); versionStatusBar.refresh(); }),

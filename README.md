@@ -16,6 +16,9 @@ A collection of tools for AL (Business Central Application Language) development
 - Report Viewer
 ![Report Viewer](./image/ReportViewer.gif)
 
+- API Viewer
+![API Viewer](./image/APIViewer.gif)
+
 - Rainbow Indent
 ![Report Viewer](./image/RainbowIndent.gif)
 
@@ -29,7 +32,6 @@ A collection of tools for AL (Business Central Application Language) development
 ![ConvertToValidate](./image/ConvertToValidate.gif)
 
 - Convert Hardcoded Text to Label
-
 ![Hardcoded Text to Label](./image/HardcodedTexttoLabel.gif)
 
 ## Features
@@ -39,6 +41,7 @@ A collection of tools for AL (Business Central Application Language) development
 | [Cleanup Duplicate App Files](docs/features/cleanup-app-files.md) | Scans your repository for duplicate `.app` files and deletes older versions, keeping only the latest of each app. |
 | [Region Viewer](docs/features/region-viewer.md) | Shows all `#region` blocks in the active AL file as a navigable tree in the Explorer sidebar. Supports nested regions and live updates as you type. |
 | [Pragma Viewer](docs/features/pragma-viewer.md) | Shows all `#if`, `#elseif`, and `#pragma warning` directives across the entire workspace, grouped by symbol or warning code. Click any line to navigate to it. |
+| [API Viewer](docs/features/api-viewer.md) | Scans the workspace for API pages and API queries, groups them by publisher/group/version, and lets you jump to each entity and copy its relative API path or full URL (with tenant/environment placeholders). |
 | [Version Bump](docs/features/version-bump.md) | Increments the Major, Minor, Build, or Revision segment of `app.json` with a single command, with automatic reset of lower segments. Status bar shows the current version at a glance. |
 | [Nuke .alpackages](docs/features/nuke-alpackages.md) | Deletes all `.app` files from every `.alpackages` folder in the workspace to force a clean re-download of dependencies. |
 | [Sync .alpackages to Latest](docs/features/sync-alpackages.md) | Finds the newest version of each app across all `.alpackages` folders, removes older copies, and propagates the latest version to any folder that was behind. |

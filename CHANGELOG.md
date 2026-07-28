@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.17.0] - 2026-07-29
+
+### Added
+
+- **API Viewer** — new sidebar view in the AL Pocket Tools activity bar that scans the whole workspace for API pages (`PageType = API`) and API queries (`QueryType = API`). Entities are grouped by API Publisher / Group / Version (objects with multiple `APIVersion` values appear under each version). Click an entity to jump to its definition; right-click for **Copy Relative Path** (e.g. `/api/contoso/sales/v1.0/companies({companyId})/customers`) and **Copy Full URL** (with `{tenantId}` / `{environment}` placeholders). Scanning is manual via the title-bar Refresh (the view never scans on its own), and overlapping Refresh clicks are ignored while a scan is in progress.
+
 ## [0.16.0] - 2026-07-20
 
 ### Added
