@@ -2,6 +2,15 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.17.1] - 2026-08-04
+
+### Fixed
+
+- **Launch Config Manager** — parse-error messages now include the underlying JSON parser message (e.g. position and description), making it easier to diagnose why `launch.json` could not be read.
+- **Launch Config Manager** — comment stripping now respects JSON string literals, so URLs such as `"server": "http://..."` are no longer corrupted when parsing `launch.json`.
+
+## [0.17.0] - 2026-07-29
+
 ## [0.17.0] - 2026-07-29
 
 ### Added

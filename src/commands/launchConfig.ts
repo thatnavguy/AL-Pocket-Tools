@@ -9,16 +9,61 @@ function escapeRegex(s: string): string {
 }
 
 function stripJsonComments(text: string): string {
-    return text.replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
+    let result = '';
+    let i = 0;
+    while (i < text.length) {
+        const ch = text[i];
+        const next = text[i + 1];
+
+        if (ch === '"') {
+            // Copy string literal verbatim, respecting escapes.
+            result += ch;
+            i++;
+            while (i < text.length) {
+                result += text[i];
+                if (text[i] === '\\' && i + 1 < text.length) {
+                    i++;
+                    result += text[i];
+                } else if (text[i] === '"') {
+                    i++;
+                    break;
+                }
+                i++;
+            }
+            continue;
+        }
+
+        if (ch === '/' && next === '/') {
+            // Skip until end of line, but keep the line ending.
+            while (i < text.length && text[i] !== '\n' && text[i] !== '\r') {
+                i++;
+            }
+            continue;
+        }
+
+        if (ch === '/' && next === '*') {
+            // Skip block comment.
+            i += 2;
+            while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) {
+                i++;
+            }
+            i += 2;
+            continue;
+        }
+
+        result += ch;
+        i++;
+    }
+    return result;
 }
 
-function parseLaunchJson(content: string): { configurations: LaunchConfig[] } | undefined {
+function parseLaunchJson(content: string): { configurations: LaunchConfig[]; error?: string } {
     try {
         const parsed = JSON.parse(stripJsonComments(content)) as Record<string, unknown>;
         if (!Array.isArray(parsed['configurations'])) { return { configurations: [] }; }
         return { configurations: parsed['configurations'] as LaunchConfig[] };
-    } catch {
-        return undefined;
+    } catch (err) {
+        return { configurations: [], error: err instanceof Error ? err.message : String(err) };
     }
 }
 
@@ -199,8 +244,8 @@ export async function pasteLaunchConfig(): Promise<void> {
     if (!picked) { return; }
 
     const parsed = parseLaunchJson(editor.document.getText());
-    if (!parsed) {
-        vscode.window.showErrorMessage('AL Pocket Tools: Could not parse launch.json — check for syntax errors.');
+    if (parsed?.error) {
+        vscode.window.showErrorMessage(`AL Pocket Tools: Could not parse launch.json — ${parsed.error}`);
         return;
     }
 
@@ -230,8 +275,8 @@ export async function clearLaunchConfigs(): Promise<void> {
 
     const content = editor.document.getText();
     const parsed = parseLaunchJson(content);
-    if (!parsed) {
-        vscode.window.showErrorMessage('AL Pocket Tools: Could not parse launch.json — check for syntax errors.');
+    if (parsed?.error) {
+        vscode.window.showErrorMessage(`AL Pocket Tools: Could not parse launch.json — ${parsed.error}`);
         return;
     }
 
@@ -280,8 +325,8 @@ export async function saveLaunchConfig(): Promise<void> {
 
     const content = editor.document.getText();
     const parsed = parseLaunchJson(content);
-    if (!parsed) {
-        vscode.window.showErrorMessage('AL Pocket Tools: Could not parse launch.json — check for syntax errors.');
+    if (parsed?.error) {
+        vscode.window.showErrorMessage(`AL Pocket Tools: Could not parse launch.json — ${parsed.error}`);
         return;
     }
 
