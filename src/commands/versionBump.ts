@@ -232,7 +232,7 @@ export class VersionStatusBar {
         );
         this.item.name = 'AL Version';
         this.item.command = 'al-pocket-tools.bumpVersion';
-        this.item.tooltip = 'AL project version — click to bump';
+        this.item.tooltip = 'AL Pocket Tools extension — AL project version. Click to bump.';
 
         context.subscriptions.push(
             this.item,

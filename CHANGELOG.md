@@ -2,6 +2,13 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [0.17.2] - 2026-08-04
+
+### Fixed
+
+- **Version status bar activation** — the version badge now activates for workspaces that contain `app.json`, even when no `.al` file is open.
+- **Version status bar tooltip** — clarified the tooltip to name the extension and explain that the badge shows the project version.
+
 ## [0.17.1] - 2026-08-04
 
 ### Fixed
