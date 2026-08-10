@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "0.17.2",
+  "version": "1.0.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -49,7 +49,8 @@
     "onView:al-pocket-tools.apiViewer",
     "onCommand:al-pocket-tools.copyFileTo",
     "onCommand:al-pocket-tools.moveFileTo",
-    "onCommand:al-pocket-tools.convertTextToLabel"
+    "onCommand:al-pocket-tools.convertTextToLabel",
+    "onCommand:al-pocket-tools.generateAppDependencyReport"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -217,6 +218,11 @@
         "command": "al-pocket-tools.convertTextToLabel",
         "title": "Convert Hardcoded Text to Label",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.generateAppDependencyReport",
+        "title": "Generate App Dependency Report",
+        "category": "AL Pocket Tools"
       }
     ],
     "submenus": [
@@ -365,6 +371,11 @@
           "command": "al-pocket-tools.searchAssignments",
           "when": "view == al-pocket-tools.assignmentTracker",
           "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "al-pocket-tools.generateAppDependencyReport"
         }
       ],
       "view/item/context": [
@@ -583,6 +594,11 @@
             "Insert IsolationLevel::UpdLock — acquires an update lock on the rows read, preventing deadlocks on subsequent writes."
           ],
           "description": "Controls whether a ReadIsolation assignment is inserted alongside SetLoadFields, and which isolation level to use. Set to None to skip."
+        },
+        "al-pocket-tools.appDependencyReport.reportFileName": {
+          "type": "string",
+          "default": "APP-DEPENDENCIES.md",
+          "description": "Reserved for the generated dependency report filename. The current command writes APP-DEPENDENCIES.md in the workspace root."
         }
       }
     }

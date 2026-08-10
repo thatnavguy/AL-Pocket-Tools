@@ -12,6 +12,7 @@ import { removeCaptionSuffix, removeCaptionPrefix } from './commands/captionAffi
 import { convertAssignmentToValidate } from './commands/convertToValidate';
 import { copyFileTo, moveFileTo } from './commands/fileSender';
 import { convertTextToLabel } from './commands/textToLabel';
+import { generateAppDependencyReport } from './commands/appDependencyReport';
 import { registerParameterAlignmentProvider } from './providers/ParameterAlignmentProvider';
 import { AssignmentTrackerProvider } from './providers/AssignmentTrackerProvider';
 import { RegionTreeProvider } from './providers/RegionTreeProvider';
@@ -243,6 +244,10 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             'al-pocket-tools.convertTextToLabel',
             () => { void convertTextToLabel(); }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.generateAppDependencyReport',
+            () => { void generateAppDependencyReport(); }
         ),
         rainbowIndent,
     );

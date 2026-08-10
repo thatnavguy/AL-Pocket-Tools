@@ -2,6 +2,13 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [1.0.0] - 2026-08-10
+
+### Added
+
+- **App Dependency Report** — new command (`AL Pocket Tools: Generate App Dependency Report`) that scans every `app.json` file in the workspace, writes `APP-DEPENDENCIES.md` to the workspace root, and opens it in the editor. The report lists each app's declared dependencies, shows which matching `.app` package versions are currently present in the workspace, and includes a generation timestamp.
+- **App Dependency Report: dependency visualisation** — the generated report now includes a Mermaid dependency graph that merges workspace apps with matching dependency nodes into one connected flow. Nodes for dependencies that do not exist as workspace apps are highlighted, nodes containing `Test` are highlighted separately, and the dependency inventory shows which apps use each dependency.
+
 ## [0.17.2] - 2026-08-04
 
 ### Fixed
