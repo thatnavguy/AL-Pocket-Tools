@@ -6,6 +6,8 @@ Toggles procedure declarations between a single-line (horizontal) layout and a v
 
 ## How to trigger
 
+### Procedure declarations
+
 Place the cursor anywhere on the procedure declaration line (or on a continuation line if the signature is already split across lines), then click the lightbulb (💡) or press `Ctrl+.` to open the code actions menu.
 
 ## Actions offered

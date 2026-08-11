@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -50,6 +50,7 @@
     "onCommand:al-pocket-tools.copyFileTo",
     "onCommand:al-pocket-tools.moveFileTo",
     "onCommand:al-pocket-tools.convertTextToLabel",
+    "onCommand:al-pocket-tools.alignProcedureCall",
     "onCommand:al-pocket-tools.generateAppDependencyReport"
   ],
   "main": "./out/extension.js",
@@ -220,6 +221,11 @@
         "category": "AL Pocket Tools"
       },
       {
+        "command": "al-pocket-tools.alignProcedureCall",
+        "title": "Align Selected Procedure Call",
+        "category": "AL Pocket Tools"
+      },
+      {
         "command": "al-pocket-tools.generateAppDependencyReport",
         "title": "Generate App Dependency Report",
         "category": "AL Pocket Tools"
@@ -304,6 +310,11 @@
         {
           "command": "al-pocket-tools.convertTextToLabel",
           "group": "5_refactor@2",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "al-pocket-tools.alignProcedureCall",
+          "group": "5_refactor@3",
           "when": "editorHasSelection"
         }
       ],

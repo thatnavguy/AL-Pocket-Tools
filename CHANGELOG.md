@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [1.1.0] - 2026-08-12
+
+### Added
+
+- **Procedure Call Alignment** — new command (`AL Pocket Tools: Align Selected Procedure Call`) that toggles a selected procedure call expression between a single-line layout and a vertical layout with one argument per line and a 4-space indent. Available from the Command Palette and the AL editor right-click submenu when text is selected. Supports wrapped expressions such as `exit(SomeProcedure(...));` and preserves nested calls plus commas inside string literals when splitting arguments.
+
 ## [1.0.0] - 2026-08-10
 
 ### Added
