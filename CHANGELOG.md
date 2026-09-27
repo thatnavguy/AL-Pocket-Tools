@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [1.2.0] - 2026-09-28
+
+### Added
+
+- **Convert IntegrationEvent to EventSubscriber** — new command (`AL Pocket Tools: Convert IntegrationEvent to EventSubscriber (Copy to Clipboard)`) that converts an `[IntegrationEvent(...)]` procedure declaration under the cursor into a matching `[EventSubscriber(...)]` stub, copied to the clipboard for pasting into a subscriber codeunit. The enclosing object's type and name are detected from the object declaration line; tables and table extensions correctly reference `Database::<Name>` while other object types use `<Type>::<Name>`. Object names containing spaces, periods, or other non-identifier characters are quoted in the attribute (e.g. `Codeunit::"Copy Document Mgt."`) and sanitized (spaces/periods stripped) when used as the generated procedure name prefix. Available from the AL editor right-click submenu (recognizes both `.al` and `.dal` files via `editorLangId`) and the Command Palette.
+
 ## [1.1.0] - 2026-08-12
 
 ### Added

@@ -2,7 +2,7 @@
   "name": "al-pocket-tools",
   "displayName": "AL Pocket Tools",
   "description": "Collection of tools for AL (Business Central) development",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "publisher": "teddyherryanto",
   "license": "MIT",
   "repository": {
@@ -51,7 +51,8 @@
     "onCommand:al-pocket-tools.moveFileTo",
     "onCommand:al-pocket-tools.convertTextToLabel",
     "onCommand:al-pocket-tools.alignProcedureCall",
-    "onCommand:al-pocket-tools.generateAppDependencyReport"
+    "onCommand:al-pocket-tools.generateAppDependencyReport",
+    "onCommand:al-pocket-tools.convertIntegrationEventToSubscriber"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -229,6 +230,11 @@
         "command": "al-pocket-tools.generateAppDependencyReport",
         "title": "Generate App Dependency Report",
         "category": "AL Pocket Tools"
+      },
+      {
+        "command": "al-pocket-tools.convertIntegrationEventToSubscriber",
+        "title": "Convert IntegrationEvent to EventSubscriber (Copy to Clipboard)",
+        "category": "AL Pocket Tools"
       }
     ],
     "submenus": [
@@ -268,7 +274,7 @@
       "editor/context": [
         {
           "submenu": "al-pocket-tools.editorAlSubmenu",
-          "when": "resourceExtname == .al",
+          "when": "editorLangId == al",
           "group": "al-pocket-tools@1"
         },
         {
@@ -316,6 +322,10 @@
           "command": "al-pocket-tools.alignProcedureCall",
           "group": "5_refactor@3",
           "when": "editorHasSelection"
+        },
+        {
+          "command": "al-pocket-tools.convertIntegrationEventToSubscriber",
+          "group": "5_refactor@4"
         }
       ],
       "al-pocket-tools.editorLaunchSubmenu": [
@@ -387,6 +397,9 @@
       "commandPalette": [
         {
           "command": "al-pocket-tools.generateAppDependencyReport"
+        },
+        {
+          "command": "al-pocket-tools.convertIntegrationEventToSubscriber"
         }
       ],
       "view/item/context": [

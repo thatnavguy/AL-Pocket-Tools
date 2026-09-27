@@ -58,6 +58,7 @@ A collection of tools for AL (Business Central Application Language) development
 | [File Sender](docs/features/file-sender.md) | Copy or move any file to a saved destination folder from the Explorer context menu. Maintain a named favourites list stored in user settings. |
 | [Convert Hardcoded Text to Label](docs/features/text-to-label.md) | Converts selected `Error(...)`, `Message(...)`, `Confirm(...)`, or `StrSubstNo(...)` calls into `Label` variables in their enclosing procedures, auto-generating label names/`Comment` properties. Supports multi-line selections spanning several procedures. |
 | [App Dependency Report](docs/features/app-dependency-report.md) | Scans every `app.json` in the workspace, lists each app's declared dependencies, and shows which matching `.app` package versions are currently available in the workspace. |
+| [Convert IntegrationEvent to EventSubscriber](docs/features/event-subscriber-converter.md) | Converts an `[IntegrationEvent(...)]` procedure declaration into a matching `[EventSubscriber(...)]` stub, named after the enclosing object, and copies it to the clipboard. |
 
 ## Requirements
 

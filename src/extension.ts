@@ -13,6 +13,7 @@ import { convertAssignmentToValidate } from './commands/convertToValidate';
 import { copyFileTo, moveFileTo } from './commands/fileSender';
 import { convertTextToLabel } from './commands/textToLabel';
 import { generateAppDependencyReport } from './commands/appDependencyReport';
+import { convertIntegrationEventToSubscriber } from './commands/eventSubscriberConverter';
 import { alignSelectedProcedureCall } from './commands/alignProcedureCall';
 import { registerParameterAlignmentProvider } from './providers/ParameterAlignmentProvider';
 import { AssignmentTrackerProvider } from './providers/AssignmentTrackerProvider';
@@ -253,6 +254,10 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             'al-pocket-tools.generateAppDependencyReport',
             () => { void generateAppDependencyReport(); }
+        ),
+        vscode.commands.registerCommand(
+            'al-pocket-tools.convertIntegrationEventToSubscriber',
+            () => { void convertIntegrationEventToSubscriber(); }
         ),
         rainbowIndent,
     );
