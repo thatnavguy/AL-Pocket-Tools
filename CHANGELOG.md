@@ -2,6 +2,12 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [1.3.0] - 2026-09-29
+
+### Added
+
+- **Convert IntegrationEvent to EventSubscriber: call-site lookup** — the command now also works when the cursor is on a call to the event (e.g. `OnRunTransformationRule(TextValue, RecordRef, Rec);`) instead of the `[IntegrationEvent(...)]` declaration itself. It extracts the called procedure's name and searches the rest of the current file for the matching event declaration before converting it. Lookup is scoped to the current file only.
+
 ## [1.2.0] - 2026-09-28
 
 ### Added

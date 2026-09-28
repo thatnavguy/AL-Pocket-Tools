@@ -44,7 +44,7 @@ export async function convertIntegrationEventToSubscriber(): Promise<void> {
     const selection = editor.selection;
     const eventInfo = findIntegrationEvent(document, selection);
     if (!eventInfo) {
-        vscode.window.showWarningMessage('Place the cursor inside (or select) an [IntegrationEvent(...)] procedure declaration.');
+        vscode.window.showWarningMessage('Place the cursor inside an [IntegrationEvent(...)] procedure declaration, or on a call to one, in this file.');
         return;
     }
 
@@ -74,8 +74,15 @@ function findIntegrationEvent(document: vscode.TextDocument, selection: vscode.S
         }
     }
 
-    if (attributeLine === -1) { return null; }
+    if (attributeLine !== -1) {
+        const eventInfo = readIntegrationEventAt(document, attributeLine);
+        if (eventInfo) { return eventInfo; }
+    }
 
+    return findIntegrationEventByCallSite(document, cursorLine);
+}
+
+function readIntegrationEventAt(document: vscode.TextDocument, attributeLine: number): IntegrationEventInfo | null {
     const attributeMatch = /^\s*\[IntegrationEvent\s*\((.*)\)\]\s*$/i.exec(document.lineAt(attributeLine).text);
     if (!attributeMatch) { return null; }
 
@@ -103,6 +110,32 @@ function findIntegrationEvent(document: vscode.TextDocument, selection: vscode.S
         procedureName,
         procedureRest: `${procedureKeyword}${procedureName}${procedureRest}`,
     };
+}
+
+// Falls back to the call site (e.g. `OnRunTransformationRule(TextValue, RecordRef, Rec);`) when the
+// cursor isn't on the event declaration itself, and looks up the matching declaration in this file.
+function findIntegrationEventByCallSite(document: vscode.TextDocument, cursorLine: number): IntegrationEventInfo | null {
+    const callMatch = /^\s*([A-Za-z_]\w*)\s*\(.*\)\s*;\s*$/.exec(document.lineAt(cursorLine).text);
+    if (!callMatch) { return null; }
+
+    const calledName = callMatch[1];
+    const declarationRegex = new RegExp(`^(\\s*)((?:local\\s+|internal\\s+)?procedure\\s+)${calledName}(\\s*\\(.*)$`, 'i');
+
+    for (let line = 0; line < document.lineCount; line++) {
+        if (!declarationRegex.test(document.lineAt(line).text)) { continue; }
+
+        for (let attributeLine = line - 1; attributeLine >= 0; attributeLine--) {
+            const text = document.lineAt(attributeLine).text.trim();
+            if (text.length === 0) { continue; }
+            if (/^\[IntegrationEvent\s*\(/i.test(text)) {
+                const eventInfo = readIntegrationEventAt(document, attributeLine);
+                if (eventInfo) { return eventInfo; }
+            }
+            break;
+        }
+    }
+
+    return null;
 }
 
 interface ObjectRef {

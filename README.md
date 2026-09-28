@@ -34,6 +34,9 @@ A collection of tools for AL (Business Central Application Language) development
 - Convert Hardcoded Text to Label
 ![Hardcoded Text to Label](./image/HardcodedTexttoLabel.gif)
 
+- Convert IntegrationEvent to EventSubscriber
+![Convert IntegrationEvent to EventSubscriber](./image/ConvertIntegrationEvent.gif)
+
 ## Features
 
 | Feature | Description |
