@@ -74,6 +74,25 @@ You can also edit this list directly in your user `settings.json` (`Ctrl+Shift+P
 
 If the array is already empty, an info message is shown and no changes are made.
 
+### Clear and paste a configuration
+
+1. Open `.vscode/launch.json` in the editor.
+2. Right-click → **AL Pocket Tools** → **Clear and Paste Launch Configuration**.
+3. Pick a saved configuration from the Quick Pick list.
+4. A confirmation prompt shows how many existing configurations will be removed. Click **Clear and Paste** to proceed.
+5. All existing configurations are removed and the selected configuration is inserted in their place, adopting the file's indentation style.
+
+If the `configurations` array is empty, the configuration is simply inserted. If the file has no `configurations` key at all, it is created automatically.
+
+### Clear all configurations in the entire workspace
+
+1. Run **AL Pocket Tools: Clear All Launch Configurations in Workspace** from the Command Palette (also available in the right-click menu when a `launch.json` is open).
+2. The command scans every workspace folder (multi-root aware) for a `.vscode/launch.json` and counts the configurations in each.
+3. A confirmation prompt shows the total number of configurations and lists the affected files. Click **Clear All** to proceed.
+4. Each file's `configurations` array is emptied and the files are saved automatically.
+
+Files with no `configurations`, an already-empty array, or JSON syntax errors are skipped — if any file failed to parse, the result message tells you.
+
 ## Commands
 
 | Command | Palette title | What it does |
@@ -81,6 +100,8 @@ If the array is already empty, an info message is shown and no changes are made.
 | `al-pocket-tools.pasteLaunchConfig` | AL Pocket Tools: Paste Launch Configuration | Pick from saved configs and append (or replace) in the open `launch.json` |
 | `al-pocket-tools.saveLaunchConfig` | AL Pocket Tools: Save Launch Configuration | Pick from configs in the open `launch.json` and save to user settings |
 | `al-pocket-tools.clearLaunchConfigs` | AL Pocket Tools: Clear Launch Configurations | Clear the `configurations` array in the open `launch.json` (with confirmation) |
+| `al-pocket-tools.clearAndPasteLaunchConfig` | AL Pocket Tools: Clear and Paste Launch Configuration | Remove all configurations in the open `launch.json` and insert a saved configuration in one step (with confirmation) |
+| `al-pocket-tools.clearAllLaunchConfigsInWorkspace` | AL Pocket Tools: Clear All Launch Configurations in Workspace | Clear the `configurations` array in every `.vscode/launch.json` across all workspace folders (with confirmation) |
 
 ## Edge cases
 

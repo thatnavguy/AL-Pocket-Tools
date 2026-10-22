@@ -83,6 +83,23 @@ function configDescription(c: LaunchConfig): string {
     return parts.join(' · ');
 }
 
+function findConfigurationsArrayRange(content: string): { start: number; end: number } | undefined {
+    const arrayMatch = /"configurations"\s*:\s*\[/.exec(content);
+    if (!arrayMatch) { return undefined; }
+
+    const start = arrayMatch.index + arrayMatch[0].length;
+    let depth = 1;
+    let idx = start;
+    while (idx < content.length && depth > 0) {
+        if (content[idx] === '[') { depth++; }
+        else if (content[idx] === ']') { depth--; }
+        idx++;
+    }
+    if (depth !== 0) { return undefined; }
+
+    return { start, end: idx - 1 };
+}
+
 function detectIndentUnit(content: string): string {
     const match = /\n([ \t]+)"/.exec(content);
     if (!match) { return '    '; }
@@ -269,6 +286,68 @@ export async function pasteLaunchConfig(): Promise<void> {
     vscode.window.showInformationMessage(`AL Pocket Tools: Added "${name ?? 'configuration'}" to launch.json.`);
 }
 
+export async function clearAndPasteLaunchConfig(): Promise<void> {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) { return; }
+
+    const saved = getSavedConfigs();
+    if (saved.length === 0) {
+        vscode.window.showInformationMessage(
+            'AL Pocket Tools: No saved launch configurations. Right-click inside a configuration in launch.json and select "Save Launch Configuration".'
+        );
+        return;
+    }
+
+    const picked = await vscode.window.showQuickPick(
+        saved.map(c => ({ label: configLabel(c), description: configDescription(c), config: c })),
+        { title: 'Clear and Paste Launch Configuration', placeHolder: 'Select a saved configuration to replace all existing ones', matchOnDescription: true }
+    );
+    if (!picked) { return; }
+
+    const doc = editor.document;
+    const content = doc.getText();
+    const parsed = parseLaunchJson(content);
+    if (parsed.error) {
+        vscode.window.showErrorMessage(`AL Pocket Tools: Could not parse launch.json — ${parsed.error}`);
+        return;
+    }
+
+    const name = typeof picked.config['name'] === 'string' ? picked.config['name'] : 'configuration';
+    const count = parsed.configurations.length;
+    const answer = await vscode.window.showWarningMessage(
+        count > 0
+            ? `This will remove ${count} existing configuration${count === 1 ? '' : 's'} and insert "${name}".`
+            : `This will insert "${name}" into the empty configurations array.`,
+        'Clear and Paste', 'Cancel'
+    );
+    if (answer !== 'Clear and Paste') { return; }
+
+    const arrayRange = findConfigurationsArrayRange(content);
+    if (!arrayRange) {
+        // No configurations array at all — append creates the key
+        await appendConfigToDocument(editor, picked.config);
+        vscode.window.showInformationMessage(`AL Pocket Tools: Added "${name}" to launch.json.`);
+        return;
+    }
+
+    const indentUnit = detectIndentUnit(content);
+    const parentIndent = doc.lineAt(doc.positionAt(arrayRange.start).line).text.match(/^([ \t]*)/)?.[1] ?? '';
+    const configIndent = parentIndent + indentUnit;
+    const indented = configIndent + JSON.stringify(picked.config, null, indentUnit).split('\n').join('\n' + configIndent);
+
+    const edit = new vscode.WorkspaceEdit();
+    edit.replace(
+        doc.uri,
+        new vscode.Range(doc.positionAt(arrayRange.start), doc.positionAt(arrayRange.end)),
+        `\n${indented}\n${parentIndent}`
+    );
+    await vscode.workspace.applyEdit(edit);
+
+    vscode.window.showInformationMessage(
+        `AL Pocket Tools: Replaced ${count} configuration${count === 1 ? '' : 's'} with "${name}" in launch.json.`
+    );
+}
+
 export async function clearLaunchConfigs(): Promise<void> {
     const editor = vscode.window.activeTextEditor;
     if (!editor) { return; }
@@ -292,30 +371,87 @@ export async function clearLaunchConfigs(): Promise<void> {
     );
     if (!answer || answer === 'Cancel') { return; }
 
-    const arrayMatch = /"configurations"\s*:\s*\[/.exec(content);
-    if (!arrayMatch) {
+    const arrayRange = findConfigurationsArrayRange(content);
+    if (!arrayRange) {
         vscode.window.showErrorMessage('AL Pocket Tools: Could not find "configurations" array in launch.json.');
         return;
     }
 
-    const arrayContentStart = arrayMatch.index + arrayMatch[0].length;
-    let depth = 1;
-    let idx = arrayContentStart;
-    while (idx < content.length && depth > 0) {
-        if (content[idx] === '[') { depth++; }
-        else if (content[idx] === ']') { depth--; }
-        idx++;
-    }
-    const closingBracketOffset = idx - 1;
-
     const doc = editor.document;
-    const range = new vscode.Range(doc.positionAt(arrayContentStart), doc.positionAt(closingBracketOffset));
+    const range = new vscode.Range(doc.positionAt(arrayRange.start), doc.positionAt(arrayRange.end));
     const edit = new vscode.WorkspaceEdit();
     edit.replace(doc.uri, range, '');
     await vscode.workspace.applyEdit(edit);
 
     vscode.window.showInformationMessage(
         `AL Pocket Tools: Cleared ${count} configuration${count === 1 ? '' : 's'} from launch.json.`
+    );
+}
+
+export async function clearAllLaunchConfigsInWorkspace(): Promise<void> {
+    const folders = vscode.workspace.workspaceFolders;
+    if (!folders || folders.length === 0) {
+        vscode.window.showInformationMessage('AL Pocket Tools: No workspace folder is open.');
+        return;
+    }
+
+    interface ClearTarget {
+        uri: vscode.Uri;
+        document: vscode.TextDocument;
+        count: number;
+        range: { start: number; end: number };
+    }
+    const targets: ClearTarget[] = [];
+    let parseFailures = 0;
+
+    for (const folder of folders) {
+        const uri = vscode.Uri.joinPath(folder.uri, '.vscode', 'launch.json');
+        let document: vscode.TextDocument;
+        try {
+            document = await vscode.workspace.openTextDocument(uri);
+        } catch {
+            continue; // no launch.json in this workspace folder
+        }
+        const content = document.getText();
+        const parsed = parseLaunchJson(content);
+        if (parsed.error) { parseFailures++; continue; }
+        if (parsed.configurations.length === 0) { continue; }
+        const range = findConfigurationsArrayRange(content);
+        if (!range) { continue; }
+        targets.push({ uri, document, count: parsed.configurations.length, range });
+    }
+
+    if (targets.length === 0) {
+        vscode.window.showInformationMessage(
+            parseFailures > 0
+                ? 'AL Pocket Tools: No launch.json configurations to clear. Some files could not be parsed — check for syntax errors.'
+                : 'AL Pocket Tools: No launch.json configurations found in this workspace.'
+        );
+        return;
+    }
+
+    const total = targets.reduce((sum, t) => sum + t.count, 0);
+    const fileList = targets.map(t => vscode.workspace.asRelativePath(t.uri)).join(', ');
+    const answer = await vscode.window.showWarningMessage(
+        `This will remove ${total} configuration${total === 1 ? '' : 's'} from ${targets.length} launch.json file${targets.length === 1 ? '' : 's'} (${fileList}).`,
+        { modal: true },
+        'Clear All'
+    );
+    if (answer !== 'Clear All') { return; }
+
+    const edit = new vscode.WorkspaceEdit();
+    for (const target of targets) {
+        edit.replace(
+            target.uri,
+            new vscode.Range(target.document.positionAt(target.range.start), target.document.positionAt(target.range.end)),
+            ''
+        );
+    }
+    await vscode.workspace.applyEdit(edit);
+    await Promise.all(targets.map(t => t.document.save()));
+
+    vscode.window.showInformationMessage(
+        `AL Pocket Tools: Cleared ${total} configuration${total === 1 ? '' : 's'} from ${targets.length} launch.json file${targets.length === 1 ? '' : 's'}.`
     );
 }
 

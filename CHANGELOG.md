@@ -2,6 +2,13 @@
 
 All notable changes to the "al-pocket-tools" extension will be documented in this file.
 
+## [1.4.0] - 2026-10-23
+
+### Added
+
+- **Launch Config Manager: Clear All Launch Configurations in Workspace** — new command (`AL Pocket Tools: Clear All Launch Configurations in Workspace`) that scans every workspace folder (multi-root aware) for `.vscode/launch.json`, shows a modal confirmation listing the affected files and total configuration count, then empties each file's `configurations` array and saves the files. Missing, empty, or unparseable files are skipped with an explanatory message.
+- **Launch Config Manager: Clear and Paste Launch Configuration** — new command (`AL Pocket Tools: Clear and Paste Launch Configuration`) that removes all existing configurations from the open `launch.json` and inserts a saved configuration from user settings in one step, with confirmation. Handles empty arrays and creates the `configurations` key if missing, preserving the file's indentation style.
+
 ## [1.3.0] - 2026-09-29
 
 ### Added
